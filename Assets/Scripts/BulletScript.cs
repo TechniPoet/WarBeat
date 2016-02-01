@@ -44,6 +44,12 @@ public class BulletScript : MonoBehaviour {
                     this.Destroy();
                 }
                 break;
+            case "Bad":
+                if (col.gameObject.GetComponent<BulletScript>().teamNum != teamNum)
+                {
+                    this.Destroy();
+                }
+                break;
             default:
                 this.Destroy();
                 break;

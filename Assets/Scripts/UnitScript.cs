@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UnitScript : Mortal {
+public class UnitScript : Mortal
+{
     
     public Transform mainTarget;
     public GameObject bullet;
@@ -11,11 +12,21 @@ public class UnitScript : Mortal {
     public float attackSpeed = .2f;
     public float attackCooldown = 1;
 
+    public enum unitState
+    {
+        nothing,
+        move,
+        shoot,
+    }
+
+    public PlayNote currNote;
+    public AudioClip moveSound;
+    public AudioClip shootSound;
+
     Vector2 goalPos;
     Vector2 currTarget;
     bool attack = false;
     bool attackCool = true;
-
     public void Setup(int newTeam, GameObject target)
     {
         team = newTeam;
@@ -36,47 +47,76 @@ public class UnitScript : Mortal {
     void Awake () {
         goalPos = new Vector2(mainTarget.position.x, transform.position.y);
         vision.team = team;
-	}
+        BeatMaster.sixteenthEvent += TickUpdate;
+        GameAmp.units.Add(this);
+        currNote = new PlayNote();
+    }
 	
 	// Update is called once per frame
 	void Update () {
-
-        if(health <= 0)
+        if (health <= 0)
         {
-            this.gameObject.SetActive(false);
+            GameAmp.units.Remove(this);
+            BeatMaster.sixteenthEvent -= TickUpdate;
+            Destroy(this.gameObject);
+            //this.gameObject.SetActive(false);
         }
-        attack = vision.intruders.Count > 0;
 
-        if (attack)
+    }
+
+    void TickUpdate(int cnt)
+    {
+        Debug.Log("tick");
+        if (cnt % (int)BeatMaster.Timing.Quarter == 0)
         {
-            currTarget = vision.intruders[0].transform.position;
-            if (Vector2.Distance(transform.position, currTarget) > attackDist)
+            attack = vision.intruders.Count > 0;
+
+            if (attack)
             {
-                MoveTowards(currTarget);
+                for (int i = 0; i < vision.intruders.Count; i++)
+                {
+                    if (vision.intruders[i] != null)
+                    {
+                        currTarget = vision.intruders[i].transform.position;
+                        break;
+                    }
+                        
+                }
+                
+                if (Vector2.Distance(transform.position, currTarget) > attackDist)
+                {
+                    MoveTowards(currTarget);
+                }
+                else
+                {
+                    if (attackCool)
+                    {
+                        Attack();
+                    }
+                }
             }
             else
             {
-                if (attackCool)
-                {
-                    Attack();
-                } 
+                goalPos = new Vector2(mainTarget.position.x, transform.position.y);
+                MoveTowards(goalPos);
             }
         }
-        else
-        {
-            goalPos = new Vector2(mainTarget.position.x, transform.position.y);
-            MoveTowards(goalPos);
-        }
-	}
+        
+
+    }
 
     void Attack()
     {
+        currNote.currNote = GameAmp.note.C;
+        
+        //GetComponent<AudioSource>().PlayOneShot(shootSound);
         Vector2 atkDir = currTarget - new Vector2(transform.position.x, transform.position.y);
         atkDir.Normalize();
+        atkDir *= .5f;
         Vector2 spawnPos = new Vector2(transform.position.x, transform.position.y) + atkDir;
         GameObject newBul = Instantiate(bullet, spawnPos, Quaternion.identity) as GameObject;
         newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team);
-        StartCoroutine(bulletCooldown());
+        //StartCoroutine(bulletCooldown());
     }
 
     IEnumerator bulletCooldown()
@@ -88,8 +128,11 @@ public class UnitScript : Mortal {
 
     void MoveTowards(Vector2 tar)
     {
+        //GetComponent<AudioSource>().PlayOneShot(moveSound);
+        currNote.currNote = GameAmp.note.E;
         Vector2 moveDir = tar - new Vector2(transform.position.x, transform.position.y);
         moveDir.Normalize();
-        transform.position = new Vector2(transform.position.x, transform.position.y) + (moveDir * moveSpeed * Time.deltaTime);
+        
+        transform.position = new Vector2(transform.position.x, transform.position.y) + (moveDir * moveSpeed /* Time.deltaTime*/);
     }
 }
