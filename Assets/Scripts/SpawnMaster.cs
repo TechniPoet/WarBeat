@@ -22,6 +22,7 @@ public class SpawnMaster : MonoBehaviour {
 
     public void SpawnZero()
     {
+        zeroBase.GetComponent<StatueScript>().health -= 30;
         Vector2 spawnPoint = spawnPointsZero[Random.Range(0, spawnPointsZero.Count)].transform.position;
         GameObject newUnit = Instantiate(unit, spawnPoint, Quaternion.identity) as GameObject;
         newUnit.GetComponent<UnitScript>().Setup(0, oneBase);
@@ -30,6 +31,7 @@ public class SpawnMaster : MonoBehaviour {
 
     public void SpawnOne()
     {
+        oneBase.GetComponent<StatueScript>().health -= 30;
         Vector2 spawnPoint = spawnPointsOne[Random.Range(0, spawnPointsOne.Count - 1)].transform.position;
         GameObject newUnit = Instantiate(unit, spawnPoint, Quaternion.identity) as GameObject;
         newUnit.GetComponent<UnitScript>().Setup(1, zeroBase);
