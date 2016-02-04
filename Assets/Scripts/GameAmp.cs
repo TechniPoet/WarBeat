@@ -66,9 +66,6 @@ public class GameAmp : MonoBehaviour {
             
             foreach (UnitScript u in units)
             {
-                
-
-                
                 note posNote = u.currNote.currNote;
                 bool found = false;
                 foreach (PlayNote n in notesToPlay)
