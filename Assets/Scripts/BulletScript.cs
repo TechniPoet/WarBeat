@@ -7,9 +7,11 @@ public class BulletScript : MonoBehaviour {
     Vector2 dir;
     int teamNum;
     float damage = 34;
+    float life;
 
-    public void Setup(float newSpeed, Vector2 newDir, int newTeam)
+    public void Setup(float newSpeed, Vector2 newDir, int newTeam, float newLife)
     {
+        life = newLife;
         speed = newSpeed;
         dir = newDir;
         teamNum = newTeam;
@@ -24,6 +26,11 @@ public class BulletScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         transform.position = new Vector2(transform.position.x, transform.position.y) + (dir * speed * Time.deltaTime);
+        life -= Time.deltaTime;
+        if (life <= 0)
+        {
+            this.Destroy();
+        }
 	}
 
     void OnCollisionEnter2D(Collision2D col)

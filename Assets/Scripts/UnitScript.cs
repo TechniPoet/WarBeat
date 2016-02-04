@@ -1,36 +1,46 @@
 ﻿using UnityEngine;
 using System.Collections;
+using GAudio;
+using System;
 
-public class UnitScript : Mortal
+public class UnitScript : Mortal, IGATPulseClient
 {
     
     public Transform mainTarget;
     public GameObject bullet;
     public DetectorScript vision;
+
     public float moveSpeed = .1f;
     public float attackDist = 2;
     public float attackSpeed = .2f;
     public float attackCooldown = 1;
+    public float bulletLife = 1.5f;
+    public PlayNote currNote;
 
-    public enum unitState
+    public enum Actions
     {
-        nothing,
-        move,
-        shoot,
+        NONE,
+        MOVE,
+        ATTACK,
     }
 
-    public PlayNote currNote;
-    public AudioClip moveSound;
-    public AudioClip shootSound;
+    public Actions[] actionPattern;
 
     Vector2 goalPos;
     Vector2 currTarget;
     bool attack = false;
     bool attackCool = true;
+
+    PulseModule pulse;
+    int curr_beat = 0;
+
+
     public void Setup(int newTeam, GameObject target)
     {
         team = newTeam;
         mainTarget = target.transform;
+        pulse = MusicManager._Pulse;
+        pulse.SubscribeToPulse( this );
 
         switch (team)
         {
@@ -47,23 +57,54 @@ public class UnitScript : Mortal
     void Awake () {
         goalPos = new Vector2(mainTarget.position.x, transform.position.y);
         vision.team = team;
-        BeatMaster.sixteenthEvent += TickUpdate;
-        GameAmp.units.Add(this);
-        currNote = new PlayNote();
+        MusicManager.units.Add(this);
     }
 	
 	// Update is called once per frame
 	void Update () {
         if (health <= 0)
         {
-            GameAmp.units.Remove(this);
-            BeatMaster.sixteenthEvent -= TickUpdate;
+            MusicManager.units.Remove(this);
             Destroy(this.gameObject);
-            //this.gameObject.SetActive(false);
         }
+        attack = vision.intruders.Count > 0;
+        if (attack)
+        {
+            for (int i = 0; i < vision.intruders.Count; i++)
+            {
+                if (vision.intruders[i] != null)
+                {
+                    currTarget = vision.intruders[i].transform.position;
+                    break;
+                }
 
+            }
+        }
+        else
+        {
+            currTarget = mainTarget.position;
+        }
     }
 
+    void IGATPulseClient.OnPulse(IGATPulseInfo pulseInfo)
+    {
+        curr_beat = pulseInfo.StepIndex;
+
+        switch (actionPattern[curr_beat])
+        {
+            case Actions.MOVE:
+                MoveTowards(currTarget);
+                break;
+            case Actions.ATTACK:
+                Attack();
+                break;
+            case Actions.NONE:
+                // Add energy
+                break;
+        }
+    }
+
+    /*
     void TickUpdate(int cnt)
     {
         Debug.Log("tick");
@@ -104,7 +145,7 @@ public class UnitScript : Mortal
         
 
     }
-
+    */
     void Attack()
     {
         currNote.currNote = GameAmp.note.C;
@@ -115,7 +156,7 @@ public class UnitScript : Mortal
         atkDir *= .5f;
         Vector2 spawnPos = new Vector2(transform.position.x, transform.position.y) + atkDir;
         GameObject newBul = Instantiate(bullet, spawnPos, Quaternion.identity) as GameObject;
-        newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team);
+        newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, bulletLife);
         //StartCoroutine(bulletCooldown());
     }
 
@@ -129,10 +170,17 @@ public class UnitScript : Mortal
     void MoveTowards(Vector2 tar)
     {
         //GetComponent<AudioSource>().PlayOneShot(moveSound);
-        currNote.currNote = GameAmp.note.E;
+        //currNote.currNote = GameAmp.note.E;
         Vector2 moveDir = tar - new Vector2(transform.position.x, transform.position.y);
         moveDir.Normalize();
         
         transform.position = new Vector2(transform.position.x, transform.position.y) + (moveDir * moveSpeed /* Time.deltaTime*/);
+    }
+
+    
+
+    void IGATPulseClient.PulseStepsDidChange(bool[] newSteps)
+    {
+        //Nothing
     }
 }

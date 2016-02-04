@@ -6,6 +6,10 @@ public class GameManager : MonoBehaviour
 {
     public const string UnitTag = "Player";
     public const string StatueTag = "Finish";
+    public float tUnitCost;
+    public float bUnitCost;
+    public static float _TUnitCost;
+    public static float _BUnitCost;
 
 
     public StatueScript zero;
@@ -13,9 +17,10 @@ public class GameManager : MonoBehaviour
 
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
     {
-	    
+        _TUnitCost = tUnitCost;
+        _BUnitCost = bUnitCost;
 	}
 	
 	// Update is called once per frame
