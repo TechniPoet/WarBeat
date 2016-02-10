@@ -39,8 +39,7 @@ public class UnitScript : Mortal, IGATPulseClient
     {
         team = newTeam;
         mainTarget = target.transform;
-        pulse = MusicManager._Pulse;
-        pulse.SubscribeToPulse( this );
+        
 
         switch (team)
         {
@@ -55,6 +54,8 @@ public class UnitScript : Mortal, IGATPulseClient
 
     // Use this for initialization
     void Awake () {
+        pulse = MusicManager._Pulse;
+        pulse.SubscribeToPulse(this);
         goalPos = new Vector2(mainTarget.position.x, transform.position.y);
         vision.team = team;
         MusicManager.units.Add(this);
@@ -65,6 +66,7 @@ public class UnitScript : Mortal, IGATPulseClient
         if (health <= 0)
         {
             MusicManager.units.Remove(this);
+            pulse.UnsubscribeToPulse(this);
             Destroy(this.gameObject);
         }
         attack = vision.intruders.Count > 0;
@@ -148,7 +150,7 @@ public class UnitScript : Mortal, IGATPulseClient
     */
     void Attack()
     {
-        currNote.currNote = GameAmp.note.C;
+        //currNote.currNote = GameAmp.note.C;
         
         //GetComponent<AudioSource>().PlayOneShot(shootSound);
         Vector2 atkDir = currTarget - new Vector2(transform.position.x, transform.position.y);

@@ -16,6 +16,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
     public GATSoundBank toLoad;
     public int arenaSplit = 7;
     int numNotes = 7;
+    bool pInit = false;
     public static List<UnitScript> units = new List<UnitScript>();
     
     enum Midnotes
@@ -54,6 +55,15 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 
     void Awake()
     {
+        if (pulse != null)
+        {
+            _Pulse = pulse;
+            //sampleBank.SoundBank = toLoad;
+            //sampleBank.LoadAll();
+            _Pulse.SubscribeToPulse(this);
+            pInit = true;
+        }
+        
         float arenaHeight = top.transform.position.y - bottom.transform.position.y;
         float noteWindow = arenaHeight / arenaSplit;
         for (int i = 0; i < numNotes; i++)
@@ -66,25 +76,51 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
             Debug.DrawLine(new Vector3(-1000, midzoneArr[i].low, 0),
                 new Vector3(1000, midzoneArr[i].low, 0), Color.black, 9999, false);
         }
-        _Pulse = pulse;
+        
+
     }
 
+    void Update()
+    {
+        if (!pInit && pulse != null)
+        {
+            _Pulse = pulse;
+            sampleBank.SoundBank = toLoad;
+            sampleBank.LoadAll();
+            _Pulse.SubscribeToPulse(this);
+            pInit = true;
+        }
+    }
     void OnEnable()
     {
-        sampleBank.SoundBank = toLoad;
-        sampleBank.LoadAll();
-        pulse.SubscribeToPulse(this);
+        
     }
 
     void OnDisable()
     {
-        pulse.UnsubscribeToPulse(this);
+        _Pulse.UnsubscribeToPulse(this);
     }
 
     public void OnPulse(IGATPulseInfo pulseInfo)
     {
+        /*
+        Debug.Log("pulse");
+        GATData mySampleData = sampleBank.GetAudioData("paino_5_G_0");
+        int trackNumber = 0;
+        GATManager.DefaultPlayer.PlayData(mySampleData, trackNumber);
+
+        mySampleData = sampleBank.GetAudioData("paino_5_A_0");
+        GATManager.DefaultPlayer.PlayData(mySampleData, 0);
+        */
+        
         curr_beat = pulseInfo.StepIndex;
+        ///*
+        GATData mySampleData = sampleBank.GetAudioData(midzoneArr[1].name);
+        int trackNumber = 0;
+        GATManager.DefaultPlayer.PlayData(mySampleData, trackNumber);
+        //*/
         UnitSounds();
+        
     }
 
     public void PulseStepsDidChange(bool[] newSteps)
