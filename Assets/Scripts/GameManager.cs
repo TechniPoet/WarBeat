@@ -38,6 +38,12 @@ public class GameManager : MonoBehaviour
     public static TeamBase _LTeam;
     public static TeamBase _RTeam;
 
+    public static Transform _Top;
+    public static Transform _Bottom;
+    public static Transform _Left;
+    public static Transform _Right;
+    public static int _ArenaDiv;
+
     public delegate void UnitDel(int team, ref GameObject unit);
     public static event UnitDel AddUnit;
     public static event UnitDel RemoveUnit;
@@ -45,6 +51,14 @@ public class GameManager : MonoBehaviour
     public static bool _Init = false;
     public const string UnitTag = "Player";
     public const string StatueTag = "Finish";
+
+    public Transform top;
+    public Transform bottom;
+    public Transform left;
+    public Transform right;
+    public int arenaDiv;
+    public bool basesOnMeasures = true;
+    public static bool _BaseMoveOnMeasure;
 
     [Header("Units")]
     public TrebleUnit tUnit;
@@ -67,15 +81,6 @@ public class GameManager : MonoBehaviour
         leftTeam.baseScript.Setup(leftTeam.baseStartEnergy, leftTeam.baseMaxEnergy, leftTeam.energyGainPerSecond);
         rightTeam.baseScript.Setup(rightTeam.baseStartEnergy, rightTeam.baseMaxEnergy, rightTeam.energyGainPerSecond);
     }
-	
-	// Update is called once per frame
-	void Update () {
-        
-        if (leftTeam.baseScript.energy <= 0 || rightTeam.baseScript.energy <= 0)
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-	}
 
     void UpdateStatics()
     {
@@ -84,7 +89,26 @@ public class GameManager : MonoBehaviour
         rightTeam.baseScript = rightTeam.baseObject.GetComponent<StatueScript>();
         _LTeam = leftTeam;
         _RTeam = rightTeam;
+
+        _Top = top;
+        _Bottom = bottom;
+        _Left = left;
+        _Right = right;
+        _ArenaDiv = arenaDiv;
+        _BaseMoveOnMeasure = basesOnMeasures;
     }
+
+
+    // Update is called once per frame
+    void Update () {
+        
+        if (leftTeam.baseScript.energy <= 0 || rightTeam.baseScript.energy <= 0)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+	}
+
+    
 
     // Adds new unit to proper list and sends event to all listeners.
     public static void AddNewUnit(int team, ref GameObject unit)

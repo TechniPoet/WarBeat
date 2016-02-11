@@ -16,7 +16,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
     public GATSoundBank toLoad;
     public int arenaSplit = 7;
     int numNotes = 7;
-    bool pInit = false;
+    public static bool _PInit = false;
     public static List<UnitScript> units = new List<UnitScript>();
     
     enum Midnotes
@@ -52,7 +52,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
     MidnoteZone[] midzoneArr = new MidnoteZone[7];
 
     int curr_beat = 0;
-
+    bool init = false;
     void Awake()
     {
         if (pulse != null)
@@ -61,34 +61,55 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
             //sampleBank.SoundBank = toLoad;
             //sampleBank.LoadAll();
             _Pulse.SubscribeToPulse(this);
-            pInit = true;
+            _PInit = true;
+        }
+        if (GameManager._Init)
+        {
+            float arenaHeight = top.transform.position.y - bottom.transform.position.y;
+            float noteWindow = arenaHeight / arenaSplit;
+            for (int i = 0; i < numNotes; i++)
+            {
+                midzoneArr[i] = new MidnoteZone();
+                midzoneArr[i].note = (Midnotes)i;
+                midzoneArr[i].name = MidNoteNames[i];
+                midzoneArr[i].low = bottom.transform.position.y + (noteWindow * i);
+                midzoneArr[i].high = midzoneArr[i].low + noteWindow;
+                Debug.DrawLine(new Vector3(-1000, midzoneArr[i].low, 0),
+                    new Vector3(1000, midzoneArr[i].low, 0), Color.black, 9999, false);
+            }
+            init = true;
         }
         
-        float arenaHeight = top.transform.position.y - bottom.transform.position.y;
-        float noteWindow = arenaHeight / arenaSplit;
-        for (int i = 0; i < numNotes; i++)
-        {
-            midzoneArr[i] = new MidnoteZone();
-            midzoneArr[i].note = (Midnotes)i;
-            midzoneArr[i].name = MidNoteNames[i];
-            midzoneArr[i].low = bottom.transform.position.y + (noteWindow* i);
-            midzoneArr[i].high = midzoneArr[i].low + noteWindow;
-            Debug.DrawLine(new Vector3(-1000, midzoneArr[i].low, 0),
-                new Vector3(1000, midzoneArr[i].low, 0), Color.black, 9999, false);
-        }
         
 
     }
 
     void Update()
     {
-        if (!pInit && pulse != null)
+        if (!_PInit && pulse != null)
         {
             _Pulse = pulse;
             sampleBank.SoundBank = toLoad;
             sampleBank.LoadAll();
             _Pulse.SubscribeToPulse(this);
-            pInit = true;
+            _PInit = true;
+        }
+
+        if (!init)
+        {
+            float arenaHeight = top.transform.position.y - bottom.transform.position.y;
+            float noteWindow = arenaHeight / arenaSplit;
+            for (int i = 0; i < numNotes; i++)
+            {
+                midzoneArr[i] = new MidnoteZone();
+                midzoneArr[i].note = (Midnotes)i;
+                midzoneArr[i].name = MidNoteNames[i];
+                midzoneArr[i].low = bottom.transform.position.y + (noteWindow * i);
+                midzoneArr[i].high = midzoneArr[i].low + noteWindow;
+                Debug.DrawLine(new Vector3(-1000, midzoneArr[i].low, 0),
+                    new Vector3(1000, midzoneArr[i].low, 0), Color.black, 9999, false);
+            }
+            init = true;
         }
     }
     void OnEnable()

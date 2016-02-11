@@ -6,8 +6,6 @@ public class SpawnMaster : MonoBehaviour {
     bool init = false;
 
     public GameObject tUnit;
-    public List<GameObject> spawnPointsZero;
-    public List<GameObject> spawnPointsOne;
 
     public GameObject zeroBase;
     public GameObject oneBase;
@@ -39,7 +37,7 @@ public class SpawnMaster : MonoBehaviour {
     public void SpawnZero()
     {
         zeroBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
-        Vector2 spawnPoint = spawnPointsZero[Random.Range(0, spawnPointsZero.Count)].transform.position;
+        Vector2 spawnPoint = GM._LTeam.baseScript.spawner.position;
         GameObject newUnit = Instantiate(tUnit, spawnPoint, Quaternion.identity) as GameObject;
         TrebleUnit u = GM._TUnit;
         newUnit.GetComponent<UnitScript>().Setup(0, oneBase, u.maxEnergy, u.startEnergy,
@@ -52,7 +50,7 @@ public class SpawnMaster : MonoBehaviour {
     public void SpawnOne()
     {
         oneBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
-        Vector2 spawnPoint = spawnPointsOne[Random.Range(0, spawnPointsOne.Count - 1)].transform.position;
+        Vector2 spawnPoint = GM._RTeam.baseScript.spawner.position;
         GameObject newUnit = Instantiate(tUnit, spawnPoint, Quaternion.identity) as GameObject;
         TrebleUnit u = GM._TUnit;
         newUnit.GetComponent<UnitScript>().Setup(1, zeroBase, u.maxEnergy, u.startEnergy,
