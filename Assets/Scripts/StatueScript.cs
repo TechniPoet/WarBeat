@@ -1,23 +1,40 @@
 ﻿using UnityEngine;
 using System.Collections;
+using GAudio;
+using System;
 
-public class StatueScript : Mortal {
+public class StatueScript : Mortal, IGATPulseClient
+{
+    bool init = false;
 
-    
-    public float healthPerSec;
-    // Use this for initialization
-    void Awake()
+    #region Pulse Methods
+    public void OnPulse(IGATPulseInfo pulseInfo)
     {
-        health = 400;
-        cachedHealth = 800;
-        
+        //throw new NotImplementedException();
+    }
+
+    public void PulseStepsDidChange(bool[] newSteps)
+    {
+        throw new NotImplementedException();
+    }
+    #endregion
+
+    public void Setup(float newStartE, float newMaxE, float newGainRate)
+    {
+        energy = newStartE;
+        maxEnergy = newMaxE;
+        gainRate = newGainRate;
+        init = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        health += healthPerSec * Time.deltaTime;
-        MortalUpdate();
+        if (init)
+        {
+            energy += gainRate * Time.deltaTime;
+            MortalUpdate();
+        }
     }
 
 }

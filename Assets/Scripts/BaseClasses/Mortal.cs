@@ -2,20 +2,21 @@
 using System.Collections;
 
 public class Mortal : MonoBehaviour {
-    public float health = 100;
+    public float energy = 100;
+    public float gainRate;
     public int team;
 
-    public RectTransform healthBar;
+    public RectTransform energyBar;
     protected float minX;
     protected float maxX;
     protected float cachedY;
-    protected float cachedHealth;
+    protected float maxEnergy;
 
     // Use this for initialization
     void Awake () {
-        cachedY = healthBar.anchoredPosition.y;
-        maxX = healthBar.anchoredPosition.x;
-        minX = healthBar.anchoredPosition.x - healthBar.rect.width;
+        cachedY = energyBar.anchoredPosition.y;
+        maxX = energyBar.anchoredPosition.x;
+        minX = energyBar.anchoredPosition.x - energyBar.rect.width;
     }
 	
 	// Update is called once per frame
@@ -25,11 +26,11 @@ public class Mortal : MonoBehaviour {
 
     protected void MortalUpdate()
     {
-        healthBar.anchoredPosition = new Vector3(minX + ((health / cachedHealth) * healthBar.rect.width), cachedY);
+        energyBar.anchoredPosition = new Vector3(minX + ((energy / maxEnergy) * energyBar.rect.width), cachedY);
     }
 
     public void TakeDamage(float amt)
     {
-        health -= amt;
+        energy -= amt;
     }
 }

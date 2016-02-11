@@ -114,11 +114,11 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
         */
         
         curr_beat = pulseInfo.StepIndex;
-        ///*
+        /*
         GATData mySampleData = sampleBank.GetAudioData(midzoneArr[1].name);
         int trackNumber = 0;
         GATManager.DefaultPlayer.PlayData(mySampleData, trackNumber);
-        //*/
+        */
         UnitSounds();
         
     }

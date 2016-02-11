@@ -34,13 +34,18 @@ public class UnitScript : Mortal, IGATPulseClient
     PulseModule pulse;
     int curr_beat = 0;
 
+    int healCount = 0;
+    float lastPulseTime = 0;
+    float deltaPulseTime = 0;
 
-    public void Setup(int newTeam, GameObject target)
+    public void Setup(int newTeam, GameObject target, float newMaxE, float newStartE, float newGainRate)
     {
         team = newTeam;
         mainTarget = target.transform;
-        
-
+        energy = newStartE;
+        maxEnergy = newStartE;
+        gainRate = newGainRate;
+        lastPulseTime = Time.time;
         switch (team)
         {
             case 0:
@@ -63,7 +68,7 @@ public class UnitScript : Mortal, IGATPulseClient
 	
 	// Update is called once per frame
 	void Update () {
-        if (health <= 0)
+        if (energy <= 0)
         {
             MusicManager.units.Remove(this);
             pulse.UnsubscribeToPulse(this);
@@ -90,8 +95,11 @@ public class UnitScript : Mortal, IGATPulseClient
 
     void IGATPulseClient.OnPulse(IGATPulseInfo pulseInfo)
     {
+        // Upkeep Tasks.
+        PulseTimer(); // Manage pulse time.
         curr_beat = pulseInfo.StepIndex;
 
+        // Action handle.
         switch (actionPattern[curr_beat])
         {
             case Actions.MOVE:
@@ -106,6 +114,11 @@ public class UnitScript : Mortal, IGATPulseClient
         }
     }
 
+    void PulseTimer()
+    {
+        deltaPulseTime = Time.time - lastPulseTime;
+        lastPulseTime = Time.time;
+    }
     /*
     void TickUpdate(int cnt)
     {
