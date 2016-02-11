@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class Mortal : MonoBehaviour {
-    public float energy = 100;
+    public float energy;
     public float gainRate;
     public int team;
 
@@ -21,11 +21,12 @@ public class Mortal : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        
 	}
 
     protected void MortalUpdate()
     {
+        energy = Mathf.Clamp(energy, -10, maxEnergy);
         energyBar.anchoredPosition = new Vector3(minX + ((energy / maxEnergy) * energyBar.rect.width), cachedY);
     }
 

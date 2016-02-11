@@ -41,8 +41,12 @@ public class SpawnMaster : MonoBehaviour {
         zeroBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
         Vector2 spawnPoint = spawnPointsZero[Random.Range(0, spawnPointsZero.Count)].transform.position;
         GameObject newUnit = Instantiate(tUnit, spawnPoint, Quaternion.identity) as GameObject;
-        newUnit.GetComponent<UnitScript>().Setup(0, oneBase, GM._TUnit.maxEnergy, GM._TUnit.startEnergy, GM._TUnit.gainEnergyRate);
+        TrebleUnit u = GM._TUnit;
+        newUnit.GetComponent<UnitScript>().Setup(0, oneBase, u.maxEnergy, u.startEnergy,
+            u.gainEnergyRate,u.moveCost, u.eigthAtkCost, u.moveSpeed, u.atkSpeed,
+            u.atkLifeSpan);
         newUnit.SetActive(true);
+        GM.AddNewUnit(0, ref newUnit);
     }
 
     public void SpawnOne()
@@ -50,7 +54,11 @@ public class SpawnMaster : MonoBehaviour {
         oneBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
         Vector2 spawnPoint = spawnPointsOne[Random.Range(0, spawnPointsOne.Count - 1)].transform.position;
         GameObject newUnit = Instantiate(tUnit, spawnPoint, Quaternion.identity) as GameObject;
-        newUnit.GetComponent<UnitScript>().Setup(1, zeroBase, GM._TUnit.maxEnergy, GM._TUnit.startEnergy,GM._TUnit.gainEnergyRate);
+        TrebleUnit u = GM._TUnit;
+        newUnit.GetComponent<UnitScript>().Setup(1, zeroBase, u.maxEnergy, u.startEnergy,
+            u.gainEnergyRate, u.moveCost, u.eigthAtkCost, u.moveSpeed, u.atkSpeed,
+            u.atkLifeSpan);
         newUnit.SetActive(true);
+        GM.AddNewUnit(1, ref newUnit);
     }
 }

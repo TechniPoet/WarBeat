@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEngine.SceneManagement;
-using System.Collections;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class TeamBase
@@ -18,10 +18,18 @@ public class TeamBase
 public class TrebleUnit
 {
     public GameObject unitPrefab;
-    public float spawnCost;
     public float maxEnergy;
     public float startEnergy;
     public float gainEnergyRate;
+    [Header("Costs")]
+    public float spawnCost;
+    public float moveCost;
+    public float eigthAtkCost;
+    [Header("Speeds")]
+    public float moveSpeed;
+    public float atkSpeed;
+    [Header("Timers")]
+    public float atkLifeSpan;
 }
 
 public class GameManager : MonoBehaviour
@@ -30,6 +38,9 @@ public class GameManager : MonoBehaviour
     public static TeamBase _LTeam;
     public static TeamBase _RTeam;
 
+    public delegate void UnitDel(int team, ref GameObject unit);
+    public static event UnitDel AddUnit;
+    public static event UnitDel RemoveUnit;
 
     public static bool _Init = false;
     public const string UnitTag = "Player";
@@ -42,11 +53,15 @@ public class GameManager : MonoBehaviour
     public TeamBase leftTeam;
     public TeamBase rightTeam;
 
+    public static List<GameObject> _LeftUnits;
+    public static List<GameObject> _RightUnits;
+
 
 	// Use this for initialization
 	void Awake ()
     {
-        
+        _LeftUnits = new List<GameObject>();
+        _RightUnits = new List<GameObject>();
         UpdateStatics();
         _Init = true;
         leftTeam.baseScript.Setup(leftTeam.baseStartEnergy, leftTeam.baseMaxEnergy, leftTeam.energyGainPerSecond);
@@ -69,5 +84,34 @@ public class GameManager : MonoBehaviour
         rightTeam.baseScript = rightTeam.baseObject.GetComponent<StatueScript>();
         _LTeam = leftTeam;
         _RTeam = rightTeam;
+    }
+
+    // Adds new unit to proper list and sends event to all listeners.
+    public static void AddNewUnit(int team, ref GameObject unit)
+    {
+        switch(team)
+        {
+            case 0:
+                _LeftUnits.Add(unit);
+                break;
+            case 1:
+                _RightUnits.Add(unit);
+                break;
+        }
+        AddUnit(team, ref unit);
+    }
+
+    public static void RemoveDeadUnit(int team, GameObject unit)
+    {
+        switch (team)
+        {
+            case 0:
+                _LeftUnits.Remove(unit);
+                break;
+            case 1:
+                _RightUnits.Remove(unit);
+                break;
+        }
+        RemoveUnit(team, ref unit);
     }
 }

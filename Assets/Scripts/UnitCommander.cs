@@ -98,7 +98,7 @@ public class UnitCommander : MonoBehaviour, IGATPulseClient
 
     void ActionChange(int team, int beatNum, UnitScript.Actions newAction)
     {
-        Debug.Log(string.Format("Action Change\nTeam: {0}\nBeatNum: {1}\nAction: {2}",team,beatNum,newAction));
+        //Debug.Log(string.Format("Action Change\nTeam: {0}\nBeatNum: {1}\nAction: {2}",team,beatNum,newAction));
         switch (team)
         {
             case 0:
