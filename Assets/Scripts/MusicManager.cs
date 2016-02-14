@@ -89,8 +89,8 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
         if (!_PInit && pulse != null)
         {
             _Pulse = pulse;
-            sampleBank.SoundBank = toLoad;
-            sampleBank.LoadAll();
+            //sampleBank.SoundBank = toLoad;
+            //sampleBank.LoadAll();
             _Pulse.SubscribeToPulse(this);
             _PInit = true;
         }
