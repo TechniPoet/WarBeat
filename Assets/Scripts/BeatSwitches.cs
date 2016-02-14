@@ -58,7 +58,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = true;
             attack = false;
             move = false;
-            SwitchChanged(team, beat, UnitScript.Actions.NONE);
+            SwitchChanged(team, beat, UnitScript.Actions.NEUTRAL);
         }
         UpdateSwitches();
     }
@@ -74,7 +74,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = true;
             attack = false;
             move = false;
-            SwitchChanged(team, beat, UnitScript.Actions.NONE);
+            SwitchChanged(team, beat, UnitScript.Actions.NEUTRAL);
         }
         UpdateSwitches();
     }
@@ -91,7 +91,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = false;
             attack = true;
             move = false;
-            SwitchChanged(team, beat, UnitScript.Actions.ATTACK);
+            SwitchChanged(team, beat, UnitScript.Actions.DEFENSIVE);
         }
         UpdateSwitches();
     }
@@ -108,7 +108,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = false;
             attack = true;
             move = false;
-            SwitchChanged(team, beat, UnitScript.Actions.ATTACK);
+            SwitchChanged(team, beat, UnitScript.Actions.DEFENSIVE);
         }
         UpdateSwitches();
     }
@@ -125,7 +125,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = false;
             attack = false;
             move = true;
-            SwitchChanged(team, beat, UnitScript.Actions.MOVE);
+            SwitchChanged(team, beat, UnitScript.Actions.AGGRESSIVE);
         }
         UpdateSwitches();
     }
@@ -142,7 +142,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = false;
             attack = false;
             move = true;
-            SwitchChanged(team, beat, UnitScript.Actions.MOVE);
+            SwitchChanged(team, beat, UnitScript.Actions.AGGRESSIVE);
         }
         UpdateSwitches();
     }

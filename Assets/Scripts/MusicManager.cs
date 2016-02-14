@@ -155,7 +155,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
         {
             switch(u.actionPattern[curr_beat])
             {
-                case UnitScript.Actions.MOVE:
+                case UnitScript.Actions.AGGRESSIVE:
                     for (int i = 0; i < arenaSplit; i++)
                     {
                         if (midzoneArr[i].InZone(u.gameObject.transform.position.y))
@@ -178,9 +178,9 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
                         }
                     }
                     break;
-                case UnitScript.Actions.ATTACK:
+                case UnitScript.Actions.DEFENSIVE:
                     break;
-                case UnitScript.Actions.NONE:
+                case UnitScript.Actions.NEUTRAL:
                     // Add energy
                     break;
             }

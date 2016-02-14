@@ -30,6 +30,9 @@ public class TrebleUnit
     public float atkSpeed;
     [Header("Timers")]
     public float atkLifeSpan;
+    [Header("Limits")]
+    public float aggrAtkDist;
+    public float defAtkDist;
 }
 
 public class GameManager : MonoBehaviour

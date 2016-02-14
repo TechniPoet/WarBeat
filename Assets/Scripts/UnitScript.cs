@@ -9,15 +9,15 @@ public class UnitScript : Mortal, IGATPulseClient
     public Transform mainTarget;
     public GameObject bullet;
     public DetectorScript vision;
-
+    Vector3 spawnPos;
     
     public PlayNote currNote;
 
     public enum Actions
     {
-        NONE,
-        MOVE,
-        ATTACK,
+        NEUTRAL,
+        AGGRESSIVE,
+        DEFENSIVE,
     }
 
     public Actions[] actionPattern;
@@ -64,7 +64,7 @@ public class UnitScript : Mortal, IGATPulseClient
         goalPos = new Vector2(mainTarget.position.x, transform.position.y);
         vision.team = team;
         MusicManager.units.Add(this);
-
+        spawnPos = this.transform.position;
         switch (team)
         {
             case 0:
@@ -103,14 +103,14 @@ public class UnitScript : Mortal, IGATPulseClient
         // Action handle.
         switch (actionPattern[curr_beat])
         {
-            case Actions.MOVE:
-                MoveTowards(currTarget);
+            case Actions.AGGRESSIVE:
+                AggressiveStrat();
                 break;
-            case Actions.ATTACK:
-                Attack();
+            case Actions.DEFENSIVE:
+                DefensiveStrat();
                 break;
-            case Actions.NONE:
-                Rest();
+            case Actions.NEUTRAL:
+                NeutralStrat();
                 break;
         }
     }
@@ -175,5 +175,50 @@ public class UnitScript : Mortal, IGATPulseClient
             pulse.UnsubscribeToPulse(this);
             Destroy(this.gameObject);
         }
+    }
+
+    void NeutralStrat()
+    {
+        Rest();
+    }
+
+    void AggressiveStrat()
+    {
+        for (int i = 0; i < enemyList.Count; i++)
+        {
+            int front = team == 0 ? 1 : -1;
+            if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._TUnit.aggrAtkDist && ((enemyList[i].transform.position.x - transform.position.x) * front) > 0)
+            {
+                currTarget = enemyList[i].transform.position;
+                Attack();
+                return;
+            }
+        }
+        if (energy < .4f * maxEnergy)
+        {
+            Rest();
+            return;
+        }
+        MoveTowards(mainTarget.position);
+    }
+
+    void DefensiveStrat()
+    {
+        for (int i = 0; i < enemyList.Count; i++)
+        {
+            int front = team == 0 ? 1 : -1;
+            if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._TUnit.defAtkDist)
+            {
+                currTarget = enemyList[i].transform.position;
+                Attack();
+                return;
+            }
+        }
+        if (energy < .8f * maxEnergy)
+        {
+            Rest();
+            return;
+        }
+        //MoveTowards(spawnPos);
     }
 }
