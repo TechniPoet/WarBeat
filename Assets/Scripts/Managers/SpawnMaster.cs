@@ -7,8 +7,8 @@ public class SpawnMaster : MonoBehaviour {
 
     public GameObject tUnit;
 
-    public GameObject zeroBase;
-    public GameObject oneBase;
+    public GameObject leftBase;
+    public GameObject rightBase;
 
     // Use this for initialization
     void Awake () {
@@ -30,33 +30,39 @@ public class SpawnMaster : MonoBehaviour {
     {
         init = true;
         tUnit = GM._TUnit.unitPrefab;
-        zeroBase = GM._LTeam.baseObject;
-        oneBase = GM._RTeam.baseObject;
+        leftBase = GM._LTeam.baseObject;
+        rightBase = GM._RTeam.baseObject;
     }
 
-    public void SpawnZero()
+    public void SpawnTrebleL()
     {
-        zeroBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
+        leftBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
+
         Vector2 spawnPoint = GM._LTeam.baseScript.spawner.position;
         GameObject newUnit = Instantiate(tUnit, spawnPoint, Quaternion.identity) as GameObject;
+
         TrebleUnit u = GM._TUnit;
-        newUnit.GetComponent<UnitScript>().Setup(0, oneBase, u.maxEnergy, u.startEnergy,
+        newUnit.GetComponent<TrebleUnitScript>().UnitSetup(0, rightBase, u.maxEnergy, u.startEnergy,
             u.gainEnergyRate,u.moveCost, u.eigthAtkCost, u.moveSpeed, u.atkSpeed,
             u.atkLifeSpan);
         newUnit.SetActive(true);
+
         GM.AddNewUnit(0, ref newUnit);
     }
 
-    public void SpawnOne()
+    public void SpawnTrebleR()
     {
-        oneBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
+        rightBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
+
         Vector2 spawnPoint = GM._RTeam.baseScript.spawner.position;
         GameObject newUnit = Instantiate(tUnit, spawnPoint, Quaternion.identity) as GameObject;
+
         TrebleUnit u = GM._TUnit;
-        newUnit.GetComponent<UnitScript>().Setup(1, zeroBase, u.maxEnergy, u.startEnergy,
+        newUnit.GetComponent<TrebleUnitScript>().UnitSetup(1, leftBase, u.maxEnergy, u.startEnergy,
             u.gainEnergyRate, u.moveCost, u.eigthAtkCost, u.moveSpeed, u.atkSpeed,
             u.atkLifeSpan);
         newUnit.SetActive(true);
+
         GM.AddNewUnit(1, ref newUnit);
     }
 }

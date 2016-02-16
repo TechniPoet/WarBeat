@@ -35,6 +35,27 @@ public class TrebleUnit
     public float defAtkDist;
 }
 
+[System.Serializable]
+public class BassUnit
+{
+    public GameObject unitPrefab;
+    public float maxEnergy;
+    public float startEnergy;
+    public float gainEnergyRate;
+    [Header("Costs")]
+    public float spawnCost;
+    public float moveCost;
+    public float eigthAtkCost;
+    [Header("Speeds")]
+    public float moveSpeed;
+    public float atkSpeed;
+    [Header("Timers")]
+    public float atkLifeSpan;
+    [Header("Limits")]
+    public float aggrAtkDist;
+    public float defAtkDist;
+}
+
 public class GameManager : MonoBehaviour
 {
     public static TrebleUnit _TUnit;
