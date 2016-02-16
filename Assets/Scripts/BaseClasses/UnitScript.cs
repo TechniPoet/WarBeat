@@ -135,10 +135,10 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         switch (team)
         {
             case 0:
-                GetComponent<SpriteRenderer>().color = Color.blue;
+				GetComponentInChildren<SpriteRenderer>().color = Color.blue;
                 break;
             case 1:
-                GetComponent<SpriteRenderer>().color = Color.red;
+				GetComponentInChildren<SpriteRenderer>().color = Color.red;
                 break;
         }
     }

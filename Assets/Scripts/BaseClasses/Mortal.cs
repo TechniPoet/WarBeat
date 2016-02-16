@@ -12,6 +12,11 @@ public class Mortal : MonoBehaviour {
     protected float cachedY;
     protected float maxEnergy;
 
+	public float MaxEnergy
+	{
+		get { return maxEnergy; }
+	}
+
     // Use this for initialization
     void Awake () {
         cachedY = energyBar.anchoredPosition.y;
