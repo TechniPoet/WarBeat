@@ -59,6 +59,7 @@ public class BassUnit
 public class GameManager : MonoBehaviour
 {
     public static TrebleUnit _TUnit;
+	public static BassUnit _BUnit;
     public static TeamBase _LTeam;
     public static TeamBase _RTeam;
 
@@ -86,6 +87,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Units")]
     public TrebleUnit tUnit;
+	public BassUnit bUnit;
     
     [Header("Teams")]
     public TeamBase leftTeam;

@@ -36,33 +36,46 @@ public class SpawnMaster : MonoBehaviour {
 
     public void SpawnTrebleL()
     {
-        leftBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
-
-        Vector2 spawnPoint = GM._LTeam.baseScript.spawner.position;
-        GameObject newUnit = Instantiate(tUnit, spawnPoint, Quaternion.identity) as GameObject;
-
-        TrebleUnit u = GM._TUnit;
-        newUnit.GetComponent<TrebleUnitScript>().UnitSetup(0, rightBase, u.maxEnergy, u.startEnergy,
-            u.gainEnergyRate,u.moveCost, u.eigthAtkCost, u.moveSpeed, u.atkSpeed,
-            u.atkLifeSpan);
-        newUnit.SetActive(true);
-
-        GM.AddNewUnit(0, ref newUnit);
+		SpawnTreble(leftBase, 0);
     }
 
     public void SpawnTrebleR()
     {
-        rightBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
+		SpawnTreble(rightBase, 1);
+	}
 
-        Vector2 spawnPoint = GM._RTeam.baseScript.spawner.position;
-        GameObject newUnit = Instantiate(tUnit, spawnPoint, Quaternion.identity) as GameObject;
+	void SpawnTreble(GameObject hBase, int team)
+	{
+		Vector2 spawnPoint;
+		GameObject attackBase;
+		switch (team)
+		{
+			case 0:
+				spawnPoint = GM._LTeam.baseScript.spawner.position;
+				attackBase = rightBase;
+				break;
+			case 1:
+				spawnPoint = GM._RTeam.baseScript.spawner.position;
+				attackBase = leftBase;
+				break;
+			default:
+				return;
+		}
 
-        TrebleUnit u = GM._TUnit;
-        newUnit.GetComponent<TrebleUnitScript>().UnitSetup(1, leftBase, u.maxEnergy, u.startEnergy,
-            u.gainEnergyRate, u.moveCost, u.eigthAtkCost, u.moveSpeed, u.atkSpeed,
-            u.atkLifeSpan);
-        newUnit.SetActive(true);
+		hBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
+		GameObject newUnit = Instantiate(tUnit, spawnPoint, Quaternion.identity) as GameObject;
 
-        GM.AddNewUnit(1, ref newUnit);
-    }
+		TrebleUnit u = GM._TUnit;
+		newUnit.GetComponent<TrebleUnitScript>().UnitSetup(team, attackBase, u.maxEnergy, u.startEnergy,
+			u.gainEnergyRate, u.moveCost, u.eigthAtkCost, u.moveSpeed, u.atkSpeed,
+			u.atkLifeSpan);
+		newUnit.SetActive(true);
+
+		if (team == 1)
+		{
+			newUnit.transform.Rotate(new Vector3(0,0, 180));
+		}
+
+		GM.AddNewUnit(team, ref newUnit);
+	}
 }
