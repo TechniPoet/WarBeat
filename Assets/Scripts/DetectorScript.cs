@@ -2,22 +2,22 @@
 using System.Collections.Generic;
 
 public class DetectorScript : MonoBehaviour {
-    [System.NonSerialized]public List<GameObject> intruders;
+    [System.NonSerialized]public List<GameObject> enemies;
     public int team;
 	// Use this for initialization
 	void Awake () {
-        intruders = new List<GameObject>();
+        enemies = new List<GameObject>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	    if (intruders.Count > 0)
+	    if (enemies.Count > 0)
         {
-            for (int i=0; i < intruders.Count; i++)
+            for (int i=0; i < enemies.Count; i++)
             {
-                if (intruders[i] == null || !intruders[i].activeSelf)
+                if (enemies[i] == null || !enemies[i].activeSelf)
                 {
-                    intruders.RemoveAt(i);
+                    enemies.RemoveAt(i);
                 }
             }
         }
@@ -25,23 +25,26 @@ public class DetectorScript : MonoBehaviour {
 
     public void OnTriggerEnter2D(Collider2D col)
     {
+        /*
         switch (col.tag)
         {
+            
             case GameManager.UnitTag:
                 if (col.gameObject.GetComponent<Mortal>().team != team)
                 {
-                    intruders.Sort((x, y) => DistCompare(x, y));
-                    intruders.Add(col.gameObject);
+                    enemies.Sort((x, y) => DistCompare(x, y));
+                    enemies.Add(col.gameObject);
                 }
                 break;
             case GameManager.StatueTag:
                 if (col.gameObject.GetComponent<Mortal>().team != team)
                 {
-                    intruders.Sort((x, y) => DistCompare(x, y));
-                    intruders.Add(col.gameObject);
+                    enemies.Sort((x, y) => DistCompare(this.gameObject, x, y));
+                    enemies.Add(col.gameObject);
                 }
                 break;
         }
+        */
         
     }
 
@@ -49,8 +52,8 @@ public class DetectorScript : MonoBehaviour {
     {
         if (col.tag == GameManager.UnitTag)
         {
-            intruders.Sort((x, y) => DistCompare(x, y));
-            intruders.Remove(col.gameObject);
+            enemies.Sort((x, y) => DistCompare(x, y));
+            enemies.Remove(col.gameObject);
         }
     }
 
