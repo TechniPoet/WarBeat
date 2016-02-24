@@ -38,7 +38,6 @@ public class StatueScript : Mortal, IGATPulseClient
                 moveInd--;
             }
         }
-        Debug.Log(moveInd);
         transform.position = movePoints[moveInd];
     }
 

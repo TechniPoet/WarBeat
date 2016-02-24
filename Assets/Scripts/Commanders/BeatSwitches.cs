@@ -13,7 +13,7 @@ public class BeatSwitches : MonoBehaviour {
     public Switch moveSwitch;
     float waitTime = .6f;
 
-    public delegate void switchedEvent(int team, int beat, UnitScript.Actions action);
+    public delegate void switchedEvent(int team, int beat, UnitScript.Strategies action);
     public event switchedEvent SwitchChanged;
 
     [System.NonSerialized]
@@ -58,7 +58,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = true;
             attack = false;
             move = false;
-            SwitchChanged(team, beat, UnitScript.Actions.NEUTRAL);
+            SwitchChanged(team, beat, UnitScript.Strategies.NEUTRAL);
         }
         UpdateSwitches();
     }
@@ -74,7 +74,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = true;
             attack = false;
             move = false;
-            SwitchChanged(team, beat, UnitScript.Actions.NEUTRAL);
+            SwitchChanged(team, beat, UnitScript.Strategies.NEUTRAL);
         }
         UpdateSwitches();
     }
@@ -91,7 +91,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = false;
             attack = true;
             move = false;
-            SwitchChanged(team, beat, UnitScript.Actions.DEFENSIVE);
+            SwitchChanged(team, beat, UnitScript.Strategies.DEFENSIVE);
         }
         UpdateSwitches();
     }
@@ -108,7 +108,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = false;
             attack = true;
             move = false;
-            SwitchChanged(team, beat, UnitScript.Actions.DEFENSIVE);
+            SwitchChanged(team, beat, UnitScript.Strategies.DEFENSIVE);
         }
         UpdateSwitches();
     }
@@ -125,7 +125,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = false;
             attack = false;
             move = true;
-            SwitchChanged(team, beat, UnitScript.Actions.AGGRESSIVE);
+            SwitchChanged(team, beat, UnitScript.Strategies.AGGRESSIVE);
         }
         UpdateSwitches();
     }
@@ -142,7 +142,7 @@ public class BeatSwitches : MonoBehaviour {
             rest = false;
             attack = false;
             move = true;
-            SwitchChanged(team, beat, UnitScript.Actions.AGGRESSIVE);
+            SwitchChanged(team, beat, UnitScript.Strategies.AGGRESSIVE);
         }
         UpdateSwitches();
     }

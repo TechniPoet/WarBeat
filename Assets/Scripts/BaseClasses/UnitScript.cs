@@ -6,13 +6,27 @@ using System;
 
 public abstract class UnitScript : Mortal, IGATPulseClient
 {
-    public enum Actions
+	public enum UnitType
+	{
+		BASS,
+		TREBLE,
+	}
+	public UnitType currType;
+    public enum Strategies
     {
         NEUTRAL,
         AGGRESSIVE,
         DEFENSIVE,
     }
-    public Actions[] actionPattern;
+
+	public enum Actions
+	{
+		ATTACK,
+		REST,
+		MOVE
+	}
+	public Actions currAction;
+    public Strategies[] actionPattern;
     public Transform mainTarget;
     
 
@@ -46,13 +60,13 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         // Action handle.
         switch (actionPattern[curr_beat])
         {
-            case Actions.AGGRESSIVE:
+            case Strategies.AGGRESSIVE:
                 AggressiveStrat();
                 break;
-            case Actions.DEFENSIVE:
+            case Strategies.DEFENSIVE:
                 DefensiveStrat();
                 break;
-            case Actions.NEUTRAL:
+            case Strategies.NEUTRAL:
                 NeutralStrat();
                 break;
         }
@@ -139,6 +153,8 @@ public abstract class UnitScript : Mortal, IGATPulseClient
                 break;
             case 1:
 				GetComponentInChildren<SpriteRenderer>().color = Color.red;
+				actionPattern = new Strategies[8] {Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.DEFENSIVE, Strategies.DEFENSIVE,
+				Strategies.AGGRESSIVE, Strategies.NEUTRAL,Strategies.AGGRESSIVE, Strategies.DEFENSIVE};
                 break;
         }
     }
@@ -157,18 +173,20 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         Vector2 moveDir = tar - new Vector2(transform.position.x, transform.position.y);
         moveDir.Normalize();
         transform.position = new Vector2(transform.position.x, transform.position.y) + (moveDir * moveSpeed /* Time.deltaTime*/);
+		currAction = Actions.MOVE;
     }
 
     protected void Rest()
     {
         energy += gainRate;
+		currAction = Actions.REST;
     }
 
     protected void DeathMethod()
     {
         if (energy <= 0)
         {
-            MusicManager.units.Remove(this);
+            MusicManager.units.Remove((UnitScript)this);
             GameManager.RemoveDeadUnit(team, this.gameObject);
             pulse.UnsubscribeToPulse(this);
             Destroy(this.gameObject);

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
 using System;
 
@@ -7,12 +8,17 @@ public class BassUnitScript : UnitScript
 
 	public GameObject bullet;
 
+	float aggrAtkDist;
+	float defAtkDist;
+
+
 	public void BassSetup(int newTeam, GameObject target, float newMaxE,
 		float newStartE, float newGainRate, float newMoveCost, float newAtkCost,
 		float newMoveSpeed, float newAtkSpeed, float newAtkLifeSpan)
 	{
 		UnitSetup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
 		newMoveSpeed, newAtkSpeed, newAtkLifeSpan);
+		currType = UnitType.BASS;
 	}
 
 
@@ -28,14 +34,14 @@ public class BassUnitScript : UnitScript
 		for (int i = 0; i < enemyList.Count; i++)
 		{
 			int front = team == 0 ? 1 : -1;
-			if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._TUnit.aggrAtkDist && ((enemyList[i].transform.position.x - transform.position.x) * front) > 0)
+			if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._BUnit.aggrAtkDist && ((enemyList[i].transform.position.x - transform.position.x) * front) > 0)
 			{
 				currTarget = enemyList[i].transform.position;
 				Attack();
 				return;
 			}
 		}
-		if (energy < .4f * maxEnergy)
+		if (energy < .5f * maxEnergy)
 		{
 			Rest();
 			return;
@@ -48,18 +54,14 @@ public class BassUnitScript : UnitScript
 		for (int i = 0; i < enemyList.Count; i++)
 		{
 			int front = team == 0 ? 1 : -1;
-			if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._TUnit.defAtkDist)
+			if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._BUnit.defAtkDist)
 			{
 				currTarget = enemyList[i].transform.position;
 				Attack();
 				return;
 			}
 		}
-		if (energy < .8f * maxEnergy)
-		{
-			Rest();
-			return;
-		}
+		Rest();
 		//MoveTowards(spawnPos);
 	}
 
@@ -74,6 +76,7 @@ public class BassUnitScript : UnitScript
 		GameObject newBul = Instantiate(bullet, spawnPos, Quaternion.identity) as GameObject;
 		newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkLife);
 		TakeDamage(atkCost);
+		currAction = Actions.ATTACK;
 	}
 
 	// Use this for initialization
@@ -82,7 +85,8 @@ public class BassUnitScript : UnitScript
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
+	public new void Update () {
+		base.Update();
+		DebugExtension.DebugCircle(transform.position, Vector3.forward, GameManager._BUnit.aggrAtkDist);
 	}
 }

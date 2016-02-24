@@ -1,21 +1,27 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
 
 public class TrebleUnitScript : UnitScript
 {
     public GameObject bullet;
 
-    new void Update()
+	float aggrAtkDist;
+	float defAtkDist;
+
+	new void Update()
     {
         base.Update();
-    }
+		DebugExtension.DebugCircle(transform.position, Vector3.forward, GameManager._TUnit.aggrAtkDist);
+	}
 
-    void TrebleSetup(int newTeam, GameObject target, float newMaxE,
+    public void TrebleSetup(int newTeam, GameObject target, float newMaxE,
         float newStartE, float newGainRate, float newMoveCost, float newAtkCost,
         float newMoveSpeed, float newAtkSpeed, float newAtkLifeSpan)
     {
         UnitSetup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
         newMoveSpeed, newAtkSpeed, newAtkLifeSpan);
+		currType = UnitType.TREBLE;
     }
 
 
@@ -78,5 +84,6 @@ public class TrebleUnitScript : UnitScript
         GameObject newBul = Instantiate(bullet, spawnPos, Quaternion.identity) as GameObject;
         newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkLife);
         TakeDamage(atkCost);
+		currAction = Actions.ATTACK;
     }
 }

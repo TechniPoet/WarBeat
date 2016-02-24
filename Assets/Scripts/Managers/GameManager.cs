@@ -111,6 +111,7 @@ public class GameManager : MonoBehaviour
     void UpdateStatics()
     {
         _TUnit = tUnit;
+		_BUnit = bUnit;
         leftTeam.baseScript = leftTeam.baseObject.GetComponent<StatueScript>();
         rightTeam.baseScript = rightTeam.baseObject.GetComponent<StatueScript>();
         _LTeam = leftTeam;

@@ -42,8 +42,15 @@ public class BasicAIController : MonoBehaviour {
 			}
 			else
 			{
-				sp.SpawnTrebleR();
-				Debug.Log("Enemy spawn");
+				if (Random.Range(0f,1f) < .7f)
+				{
+					sp.SpawnTreble(1);
+				}
+				else
+				{
+					sp.SpawnBass(1);
+				}
+				
 				float waitTime = randIntervals ? Random.Range(minSpawnTime, spawnCoolTime) : spawnCoolTime;
 				yield return new WaitForSeconds(waitTime);
 			}

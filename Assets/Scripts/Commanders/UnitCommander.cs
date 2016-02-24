@@ -8,8 +8,8 @@ public class UnitCommander : MonoBehaviour, IGATPulseClient
 
     PulseModule pulse;
     public BeatSwitches[] switches;
-    UnitScript.Actions[] actionPatternZero = new UnitScript.Actions[8];
-    UnitScript.Actions[] actionPatternOne = new UnitScript.Actions[8];
+    UnitScript.Strategies[] actionPatternZero = new UnitScript.Strategies[8];
+    UnitScript.Strategies[] actionPatternOne = new UnitScript.Strategies[8];
     bool init = false;
 
     // Use this for initialization
@@ -70,7 +70,6 @@ public class UnitCommander : MonoBehaviour, IGATPulseClient
                     
                     break;
                 case 1:
-                    u.actionPattern = actionPatternOne;
                     break;
             }
         }
@@ -96,7 +95,7 @@ public class UnitCommander : MonoBehaviour, IGATPulseClient
         throw new NotImplementedException();
     }
 
-    void ActionChange(int team, int beatNum, UnitScript.Actions newAction)
+    void ActionChange(int team, int beatNum, UnitScript.Strategies newAction)
     {
         //Debug.Log(string.Format("Action Change\nTeam: {0}\nBeatNum: {1}\nAction: {2}",team,beatNum,newAction));
         switch (team)
