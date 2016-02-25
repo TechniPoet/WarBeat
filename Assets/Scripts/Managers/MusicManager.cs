@@ -96,7 +96,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 			midzoneArr[i].name = MidNoteNames[i];
 			midzoneArr[i].low = bottom.transform.position.y + (noteWindow * i);
 			midzoneArr[i].high = midzoneArr[i].low + noteWindow;
-			Debug.Log(string.Format("line at {0}", midzoneArr[i].low));
+			//Debug.Log(string.Format("line at {0}", midzoneArr[i].low));
 			Debug.DrawLine(new Vector3(-1000, midzoneArr[i].low, 0),
 				new Vector3(1000, midzoneArr[i].low, 0), Color.black, 9999, false);
 		}
@@ -169,6 +169,10 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 				default:
 					register = 3;
 					break;
+			}
+			if (u == null || u.gameObject == null)
+			{
+				continue;
 			}
 
 			switch (u.currAction)

@@ -58,7 +58,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         curr_beat = pulseInfo.StepIndex;
 
         // Action handle.
-        switch (actionPattern[curr_beat])
+        switch (actionPattern[0])
         {
             case Strategies.AGGRESSIVE:
                 AggressiveStrat();
@@ -169,17 +169,17 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 
     protected void MoveTowards(Vector2 tar)
     {
-        TakeDamage(moveCost);
+		currAction = Actions.MOVE;
+		TakeDamage(moveCost);
         Vector2 moveDir = tar - new Vector2(transform.position.x, transform.position.y);
         moveDir.Normalize();
         transform.position = new Vector2(transform.position.x, transform.position.y) + (moveDir * moveSpeed /* Time.deltaTime*/);
-		currAction = Actions.MOVE;
     }
 
     protected void Rest()
     {
-        energy += gainRate;
 		currAction = Actions.REST;
+		energy += gainRate;
     }
 
     protected void DeathMethod()

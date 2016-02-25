@@ -38,7 +38,7 @@ public class UnitCommander : MonoBehaviour, IGATPulseClient
 
     void OnDisable()
     {
-        //pulse.UnsubscribeToPulse(this);
+        pulse.UnsubscribeToPulse(this);
     }
 
 
@@ -77,6 +77,7 @@ public class UnitCommander : MonoBehaviour, IGATPulseClient
 
     public void OnPulse(IGATPulseInfo pulseInfo)
     {
+		/*
         foreach (BeatSwitches b in switches)
         {
             if (pulseInfo.StepIndex == b.beat)
@@ -87,7 +88,7 @@ public class UnitCommander : MonoBehaviour, IGATPulseClient
             {
                 b.beatImage.enabled = false;
             }
-        }
+        }*/
     }
 
     public void PulseStepsDidChange(bool[] newSteps)
@@ -101,7 +102,10 @@ public class UnitCommander : MonoBehaviour, IGATPulseClient
         switch (team)
         {
             case 0:
-                actionPatternZero[beatNum] = newAction;
+				for (int i = 0; i < 8; i++)
+				{
+					actionPatternZero[i] = newAction;
+				}
                 break;
             case 1:
                 actionPatternOne[beatNum] = newAction;
