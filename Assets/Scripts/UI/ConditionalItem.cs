@@ -10,11 +10,9 @@ public class ConditionalItem
 	public float cond2Val;
 	public ConstFile.Actions action;
 	string sentence;
-	int serialNum;
 
-	public ConditionalItem(int serial)
+	public ConditionalItem()
 	{
-		serialNum = serial;
 		cond1Val = 0;
 		cond2Val = 0;
 		cond1Ind = ConstFile.ConditionOptions.ENEMY_DISTANCE;
@@ -61,7 +59,7 @@ public class ConditionalItem
 	string ConditionString(ConstFile.ConditionOptions opt, bool one)
 	{
 		string retString = string.Empty;
-		switch (cond1Ind)
+		switch (opt)
 		{
 			case ConstFile.ConditionOptions.ENEMY_DISTANCE:
 				retString = "Enemy Distance";

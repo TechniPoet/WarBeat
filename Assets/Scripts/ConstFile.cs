@@ -17,12 +17,16 @@ public static class ConstFile
 		VALUE = 2,
 	}
 
+	public static string[] ConditionOptionsText = new string[] { "Energy", "Enemy Distance", "Value" };
+
 	public enum Actions
 	{
-		ATTACK,
-		MOVE_FORWARD,
-		MOVE_ENEMY,
-		MOVE_BACK,
-		REST,
+		ATTACK = 0,
+		MOVE_FORWARD = 1,
+		MOVE_ENEMY = 2,
+		MOVE_BACK = 3,
+		REST = 4,
 	}
+
+	public static string[] ActionsText = new string[] { "Attack", "Move Forward", "Move to Enemy", "Move Back", "Rest" };
 }
