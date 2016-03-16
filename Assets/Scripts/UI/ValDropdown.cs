@@ -32,6 +32,7 @@ public class ValDropdown : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		currVal = spin.Value;
 		spinObj.SetActive(varCheck.value == (int)CondOptions.VALUE);
 	}
 

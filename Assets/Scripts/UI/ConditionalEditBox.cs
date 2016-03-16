@@ -35,6 +35,8 @@ public class ConditionalEditBox : MonoBehaviour {
 	{
 		cond1.varCheck.value = (int)newItem.cond1Ind;
 		cond2.varCheck.value = (int)newItem.cond2Ind;
+		cond1.spin.Value = newItem.cond1Val;
+		cond2.spin.Value = newItem.cond2Val;
 		condBool.value = newItem.greater ? 0 : 1;
 		actionDropdown.value = (int)newItem.action;
 	}
