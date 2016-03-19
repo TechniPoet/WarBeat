@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using GAudio;
 using System;
+using Actions = ConstFile.Actions;
+using CondOptions = ConstFile.ConditionOptions;
 
 public abstract class UnitScript : Mortal, IGATPulseClient
 {
@@ -18,14 +20,8 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         AGGRESSIVE,
         DEFENSIVE,
     }
-
-	public enum Actions
-	{
-		ATTACK,
-		REST,
-		MOVE
-	}
-	public Actions currAction;
+	
+	public ConstFile.Actions currAction;
     public Strategies[] actionPattern;
     public Transform mainTarget;
     
@@ -169,7 +165,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 
     protected void MoveTowards(Vector2 tar)
     {
-		currAction = Actions.MOVE;
+		//currAction = Actions.MOVE;
 		TakeDamage(moveCost);
         Vector2 moveDir = tar - new Vector2(transform.position.x, transform.position.y);
         moveDir.Normalize();
@@ -192,6 +188,55 @@ public abstract class UnitScript : Mortal, IGATPulseClient
             Destroy(this.gameObject);
         }
     }
+
+	protected bool ValidAction(ConditionalItem item)
+	{
+		float firstVal = 0, secondVal = 0;
+
+		switch (item.cond1Ind)
+		{
+			case CondOptions.ENEMY_DISTANCE:
+				if (enemyList.Count > 0)
+				{
+					firstVal = Vector2.Distance(this.transform.position, enemyList[0].transform.position);
+				}
+				else
+				{
+					firstVal = float.MaxValue;
+				}
+				break;
+			case CondOptions.ENERGY:
+				firstVal = energy;
+				break;
+			case CondOptions.VALUE:
+				firstVal = item.cond1Val;
+				break;
+		}
+
+		switch (item.cond2Ind)
+		{
+			case CondOptions.ENEMY_DISTANCE:
+				if (enemyList.Count > 0)
+				{
+					secondVal = Vector2.Distance(this.transform.position, enemyList[0].transform.position);
+				}
+				else
+				{
+					secondVal = float.MaxValue;
+				}
+				break;
+			case CondOptions.ENERGY:
+				secondVal = energy;
+				break;
+			case CondOptions.VALUE:
+				secondVal = item.cond2Val;
+				break;
+		}
+
+		bool retVal = item.greater ? firstVal > secondVal : firstVal < secondVal;
+
+		return retVal;
+	}
 
     
 }

@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
-using UnityEditor;
-using System.Collections;
-using System;
+using System.Collections.Generic;
+using Actions = ConstFile.Actions;
 
 public class BassUnitScript : UnitScript
 {
 
 	public GameObject bullet;
-
+	Vector3 backMovementMod;
 	float aggrAtkDist;
 	float defAtkDist;
-
+	List<ConditionalItem> neutralAI;
+	List<ConditionalItem> aggressiveAI;
+	List<ConditionalItem> defensiveAI;
 
 	public void BassSetup(int newTeam, GameObject target, float newMaxE,
 		float newStartE, float newGainRate, float newMoveCost, float newAtkCost,
@@ -19,6 +20,20 @@ public class BassUnitScript : UnitScript
 		UnitSetup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
 		newMoveSpeed, newAtkSpeed, newAtkLifeSpan);
 		currType = UnitType.BASS;
+		if (team == 0)
+		{
+			backMovementMod = new Vector3(-100, 0, 0);
+			neutralAI = AIManager.BassUnit.NeutralAI;
+			aggressiveAI = AIManager.BassUnit.AggressiveAI;
+			defensiveAI = AIManager.BassUnit.DefensiveAI;
+		}
+		else
+		{
+			backMovementMod = new Vector3(100, 0, 0);
+			neutralAI = AIManager.EnemyBassUnit.NeutralAI;
+			aggressiveAI = AIManager.EnemyBassUnit.AggressiveAI;
+			defensiveAI = AIManager.EnemyBassUnit.DefensiveAI;
+		}
 	}
 
 
@@ -26,43 +41,120 @@ public class BassUnitScript : UnitScript
 
 	protected override void NeutralStrat()
 	{
-		Rest();
+		bool actionMade = false;
+		for (int i = 0; i < neutralAI.Count; i++)
+		{
+			ConditionalItem decision = neutralAI[i];
+			if (ValidAction(decision))
+			{
+				actionMade = true;
+				switch (decision.action)
+				{
+					case Actions.ATTACK:
+						currTarget = enemyList[0].transform.position;
+						Attack();
+						break;
+					case Actions.MOVE_BACK:
+						Vector3 backTarget = this.transform.position + backMovementMod;
+						MoveTowards(backTarget);
+						break;
+					case Actions.MOVE_FORWARD:
+						Vector3 forTarget = this.transform.position + -backMovementMod;
+						MoveTowards(forTarget);
+						break;
+					case Actions.MOVE_ENEMY:
+						MoveTowards(enemyList[0].transform.position);
+						break;
+					case Actions.REST:
+						Rest();
+						break;
+				}
+			}
+		}
+		if (!actionMade)
+		{
+			Rest();
+		}
 	}
 
 	protected override void AggressiveStrat()
 	{
-		for (int i = 0; i < enemyList.Count; i++)
+		bool actionMade = false;
+		for (int i = 0; i < aggressiveAI.Count; i++)
 		{
-			int front = team == 0 ? 1 : -1;
-			if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._BUnit.aggrAtkDist && ((enemyList[i].transform.position.x - transform.position.x) * front) > 0)
+			ConditionalItem decision = aggressiveAI[i];
+			if (ValidAction(decision))
 			{
-				currTarget = enemyList[i].transform.position;
-				Attack();
-				return;
+				actionMade = true;
+				switch (decision.action)
+				{
+					case Actions.ATTACK:
+						currTarget = enemyList[0].transform.position;
+						Attack();
+						break;
+					case Actions.MOVE_BACK:
+						Vector3 backTarget = this.transform.position + backMovementMod;
+						MoveTowards(backTarget);
+						break;
+					case Actions.MOVE_FORWARD:
+						Vector3 forTarget = this.transform.position + -backMovementMod;
+						MoveTowards(forTarget);
+						break;
+					case Actions.MOVE_ENEMY:
+						MoveTowards(enemyList[0].transform.position);
+						break;
+					case Actions.REST:
+						Rest();
+						break;
+				}
+			}
+			if (actionMade)
+			{
+				break;
 			}
 		}
-		if (energy < .5f * maxEnergy)
+		if (!actionMade)
 		{
 			Rest();
-			return;
 		}
-		MoveTowards(mainTarget.position);
 	}
 
 	protected override void DefensiveStrat()
 	{
-		for (int i = 0; i < enemyList.Count; i++)
+		bool actionMade = false;
+		for (int i = 0; i < defensiveAI.Count; i++)
 		{
-			int front = team == 0 ? 1 : -1;
-			if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._BUnit.defAtkDist)
+			ConditionalItem decision = defensiveAI[i];
+			if (ValidAction(decision))
 			{
-				currTarget = enemyList[i].transform.position;
-				Attack();
-				return;
+				actionMade = true;
+				switch (decision.action)
+				{
+					case Actions.ATTACK:
+						currTarget = enemyList[0].transform.position;
+						Attack();
+						break;
+					case Actions.MOVE_BACK:
+						Vector3 backTarget = this.transform.position + backMovementMod;
+						MoveTowards(backTarget);
+						break;
+					case Actions.MOVE_FORWARD:
+						Vector3 forTarget = this.transform.position + -backMovementMod;
+						MoveTowards(forTarget);
+						break;
+					case Actions.MOVE_ENEMY:
+						MoveTowards(enemyList[0].transform.position);
+						break;
+					case Actions.REST:
+						Rest();
+						break;
+				}
 			}
 		}
-		Rest();
-		//MoveTowards(spawnPos);
+		if (!actionMade)
+		{
+			Rest();
+		}
 	}
 
 	#endregion
@@ -71,10 +163,9 @@ public class BassUnitScript : UnitScript
 	{
 		Vector2 atkDir = currTarget - new Vector2(transform.position.x, transform.position.y);
 		atkDir.Normalize();
-		atkDir *= .5f;
 		Vector2 spawnPos = new Vector2(transform.position.x, transform.position.y) + atkDir;
 		GameObject newBul = Instantiate(bullet, spawnPos, Quaternion.identity) as GameObject;
-		newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkLife);
+		newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkCost);
 		TakeDamage(atkCost);
 		currAction = Actions.ATTACK;
 	}

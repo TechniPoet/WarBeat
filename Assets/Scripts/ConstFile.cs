@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
 public static class ConstFile
 {
 	public enum AIModes
@@ -10,7 +11,7 @@ public static class ConstFile
 		NEUTRAL,
 	}
 
-	public enum ConditionOptions
+	public enum ConditionOptions : int
 	{
 		ENERGY = 0,
 		ENEMY_DISTANCE = 1,

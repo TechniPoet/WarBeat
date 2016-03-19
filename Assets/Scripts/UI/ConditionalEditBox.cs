@@ -29,6 +29,7 @@ public class ConditionalEditBox : MonoBehaviour {
 		tempItem.cond2Ind = (ConstFile.ConditionOptions)cond2.varCheck.value;
 		tempItem.cond1Val = cond1.currVal;
 		tempItem.cond2Val = cond2.currVal;
+		tempItem.greater = condBool.value == 0 ? true : false;
 	}
 
 	public void SetVals(ConditionalItem newItem)

@@ -23,6 +23,7 @@ public class ConditionalsListView : ListViewCustom<ConditionalListViewComponent,
 			DataSource[SelectedIndex].cond1Val = editBox.tempItem.cond1Val;
 			DataSource[SelectedIndex].cond2Ind = editBox.tempItem.cond2Ind;
 			DataSource[SelectedIndex].cond2Val = editBox.tempItem.cond2Val;
+			DataSource[SelectedIndex].greater = editBox.tempItem.greater;
 		}
 	}
 

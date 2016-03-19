@@ -6,13 +6,13 @@ public class BulletScript : MonoBehaviour {
     float speed;
     Vector2 dir;
     int teamNum;
-    public float damage = 34;
-    float life;
+	float energyPerUnit = 10;
+    public float energy = 34;
 	public bool dead = false;
 
-    public void Setup(float newSpeed, Vector2 newDir, int newTeam, float newLife)
+    public void Setup(float newSpeed, Vector2 newDir, int newTeam, float newEnergy)
     {
-        life = newLife;
+        energy = newEnergy * 1.5f;
         speed = newSpeed;
         dir = newDir;
         teamNum = newTeam;
@@ -27,11 +27,16 @@ public class BulletScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         transform.position = new Vector2(transform.position.x, transform.position.y) + (dir * speed * Time.deltaTime);
-        life -= Time.deltaTime;
-        if (life <= 0 || damage <= 0)
+        energy -= energyPerUnit * (dir * speed * Time.deltaTime).magnitude;
+        if (energy <= 0)
         {
 			dead = true;
         }
+		else
+		{
+			transform.localScale = new Vector3(energy/20, energy/20, 1);
+		}
+		
 	}
 
     void OnCollisionEnter2D(Collision2D col)
@@ -41,7 +46,7 @@ public class BulletScript : MonoBehaviour {
             case GameManager.UnitTag:
                 if (col.gameObject.GetComponent<Mortal>().team != teamNum)
                 {
-                    col.gameObject.GetComponent<Mortal>().TakeDamage(damage);
+                    col.gameObject.GetComponent<Mortal>().TakeDamage(energy);
                     this.Destroy();
                 }
 				else
@@ -52,7 +57,7 @@ public class BulletScript : MonoBehaviour {
             case GameManager.StatueTag:
                 if (col.gameObject.GetComponent<Mortal>().team != teamNum)
                 {
-                    col.gameObject.GetComponent<Mortal>().TakeDamage(damage);
+                    col.gameObject.GetComponent<Mortal>().TakeDamage(energy);
                     this.Destroy();
                 }
                 break;
@@ -62,7 +67,7 @@ public class BulletScript : MonoBehaviour {
 				if (bul.teamNum != teamNum)
                 {
 					float oldDmg = bul.GetDamage();
-					bul.TakeDamage(damage);
+					bul.TakeDamage(energy);
 					TakeDamage(oldDmg);
                 }
                 break;
@@ -82,12 +87,12 @@ public class BulletScript : MonoBehaviour {
 
     public float GetDamage()
     {
-        return damage;
+        return energy;
     }
 
 	public void TakeDamage(float dmg)
 	{
-		damage -= dmg;
+		energy -= dmg;
 	}
 
     public void Destroy()

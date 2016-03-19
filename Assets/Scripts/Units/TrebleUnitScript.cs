@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using Actions = ConstFile.Actions;
 
 public class TrebleUnitScript : UnitScript
 {

@@ -111,7 +111,7 @@ public class SpawnMaster : MonoBehaviour {
 		GameObject newUnit = Instantiate(bUnit, spawnPoint, Quaternion.identity) as GameObject;
 
 		BassUnit u = GM._BUnit;
-		newUnit.GetComponent<BassUnitScript>().UnitSetup(team, attackBase, u.maxEnergy, u.startEnergy,
+		newUnit.GetComponent<BassUnitScript>().BassSetup(team, attackBase, u.maxEnergy, u.startEnergy,
 			u.gainEnergyRate, u.moveCost, u.eigthAtkCost, u.moveSpeed, u.atkSpeed,
 			u.atkLifeSpan);
 		newUnit.SetActive(true);

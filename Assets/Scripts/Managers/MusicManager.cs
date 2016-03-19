@@ -177,7 +177,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 
 			switch (u.currAction)
             {
-                case UnitScript.Actions.MOVE:
+                case ConstFile.Actions.MOVE_ENEMY:
                     for (int i = 0; i < numNotes; i++)
                     {
 						if (midzoneArr[i].InZone(u.gameObject.transform.position.y))
@@ -205,7 +205,65 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 						}
                     }
                     break;
-                case UnitScript.Actions.ATTACK:
+
+				case ConstFile.Actions.MOVE_BACK:
+					for (int i = 0; i < numNotes; i++)
+					{
+						if (midzoneArr[i].InZone(u.gameObject.transform.position.y))
+						{
+							float arenaWidth = right.position.x - left.position.x;
+							float percent = (u.gameObject.transform.position.x - left.position.x) / arenaWidth;
+							int trackNumber = 0;
+							string noteName;
+							if (u.team == 0)
+							{
+								noteName = midzoneArr[(i + 2) % numNotes].name;
+							}
+							else
+							{
+								noteName = midzoneArr[i].name;
+								percent = 1 - percent;
+							}
+							noteName = string.Format(noteName, register);
+							if (!notes.Contains(noteName))
+							{
+								GATData mySampleData = sampleBank.GetAudioData(string.Format(noteName, register));
+								GATManager.DefaultPlayer.PlayData(mySampleData, trackNumber, percent);
+								notes.Add(noteName);
+							}
+						}
+					}
+					break;
+				case ConstFile.Actions.MOVE_FORWARD:
+					for (int i = 0; i < numNotes; i++)
+					{
+						if (midzoneArr[i].InZone(u.gameObject.transform.position.y))
+						{
+							float arenaWidth = right.position.x - left.position.x;
+							float percent = (u.gameObject.transform.position.x - left.position.x) / arenaWidth;
+							int trackNumber = 0;
+							string noteName;
+							if (u.team == 0)
+							{
+								noteName = midzoneArr[(i + 2) % numNotes].name;
+							}
+							else
+							{
+								noteName = midzoneArr[i].name;
+								percent = 1 - percent;
+							}
+							noteName = string.Format(noteName, register);
+							if (!notes.Contains(noteName))
+							{
+								GATData mySampleData = sampleBank.GetAudioData(string.Format(noteName, register));
+								GATManager.DefaultPlayer.PlayData(mySampleData, trackNumber, percent);
+								notes.Add(noteName);
+							}
+						}
+					}
+					break;
+
+				case ConstFile.Actions.ATTACK:
 					for (int i = 0; i < numNotes; i++)
 					{
 						if (midzoneArr[i].InZone(u.gameObject.transform.position.y))
@@ -229,7 +287,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 						}
 					}
 					break;
-                case UnitScript.Actions.REST:
+                case ConstFile.Actions.REST:
                     // no sound
                     break;
             }
