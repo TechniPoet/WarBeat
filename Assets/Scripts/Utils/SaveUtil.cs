@@ -34,7 +34,6 @@ public static class SaveUtil
 		{
 			List<T> retList = new List<T>();
 			string[] strings = PlayerPrefs.GetString(key).Split(new String[] { delimeter }, System.StringSplitOptions.None);
-			Debug.Log(strings.Length);
 			for (int i = 0; i < strings.Length; i++)
 			{
 				retList.Add(DeserializeFromString<T>(strings[i]));

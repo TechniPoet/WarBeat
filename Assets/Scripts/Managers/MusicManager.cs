@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using GAudio;
+using System.Collections;
 
 public class MusicManager : MonoBehaviour, IGATPulseClient
 {
@@ -66,13 +67,12 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 
     void Awake()
     {
-        if (pulse != null)
+		
+		if (pulse != null)
         {
-            _Pulse = pulse;
-            //sampleBank.SoundBank = toLoad;
-            //sampleBank.LoadAll();
-            _Pulse.SubscribeToPulse(this);
-            _PInit = true;
+            
+			StartCoroutine(Load());
+			
         }
         if (GameManager._Init)
         {
@@ -83,6 +83,29 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 
     }
 
+	void StartPulse()
+	{
+		_Pulse.SubscribeToPulse(this);
+		sampleBank.LoadFinished -= StartPulse;
+	}
+
+	IEnumerator Load()
+	{
+		sampleBank.LoadFinished += StartPulse;
+		_Pulse = pulse;
+		_PInit = true;
+		sampleBank.SoundBank = toLoad;
+		sampleBank.LoadAll();
+		/*
+		yield return new WaitForSeconds(.1f);
+		sampleBank.UnloadAll();
+		yield return new WaitForSeconds(.1f);
+		sampleBank.LoadAll();
+		*/
+		
+		
+		yield return null;
+	}
 
 	void NoteSetup ()
 	{
@@ -106,12 +129,8 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
     {
         if (!_PInit && pulse != null)
         {
-            _Pulse = pulse;
-            //sampleBank.SoundBank = toLoad;
-            //sampleBank.LoadAll();
-            _Pulse.SubscribeToPulse(this);
-            _PInit = true;
-        }
+			StartCoroutine(Load());
+		}
 
         if (!init)
         {
@@ -143,6 +162,8 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
     public void OnPulse(IGATPulseInfo pulseInfo)
     {
         curr_beat = pulseInfo.StepIndex;
+		//GATData mySampleData = sampleBank.GetAudioData("paino_3_A_0");
+		//GATManager.DefaultPlayer.PlayData(mySampleData, 0, 1);
 		pulseNow = true;
     }
 
@@ -153,6 +174,12 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 
     void UnitSounds()
     {
+		while (GATManager.DefaultPlayer.NbOfTracks < 4)
+		{
+			GATManager.DefaultPlayer.AddTrack<GATTrack>();
+		}
+
+
 		List<string> notes = new List<string>();
         foreach(UnitScript u in units)
         {
@@ -213,7 +240,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 						{
 							float arenaWidth = right.position.x - left.position.x;
 							float percent = (u.gameObject.transform.position.x - left.position.x) / arenaWidth;
-							int trackNumber = 0;
+							int trackNumber = 1;
 							string noteName;
 							if (u.team == 0)
 							{
@@ -241,7 +268,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 						{
 							float arenaWidth = right.position.x - left.position.x;
 							float percent = (u.gameObject.transform.position.x - left.position.x) / arenaWidth;
-							int trackNumber = 0;
+							int trackNumber = 2;
 							string noteName;
 							if (u.team == 0)
 							{
@@ -270,7 +297,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 						{
 							float arenaWidth = right.position.x - left.position.x;
 							float percent = (u.gameObject.transform.position.x - left.position.x) / arenaWidth;
-							int trackNumber = 0;
+							int trackNumber = 3;
 							string noteName;
 							if (u.team == 0)
 							{

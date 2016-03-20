@@ -675,7 +675,10 @@ namespace GAudio
 			sample = _playingSamples.head.next;
 			
 			if( onPlayerWillMix != null )
+			{
 				onPlayerWillMix();
+			}
+				
 			
 			//Even if there is no samples to play, filters might add to the mix:
 			if( sample == null )
@@ -694,6 +697,7 @@ namespace GAudio
 					}
 				}
 				
+				
 				//Check Master Filters
 				if( _FiltersHandler.HasFilters )
 				{
@@ -709,6 +713,7 @@ namespace GAudio
 				//Stop there.
 				if( onPlayerDidMix != null )
 					onPlayerDidMix();
+
 				
 				return;
 			}
@@ -768,6 +773,7 @@ namespace GAudio
 					gain -= deltaGain;
 				}
 			}
+			
 		}
 		
 		#endregion

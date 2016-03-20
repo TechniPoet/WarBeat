@@ -45,36 +45,50 @@ public class BassUnitScript : UnitScript
 		for (int i = 0; i < neutralAI.Count; i++)
 		{
 			ConditionalItem decision = neutralAI[i];
-			if (ValidAction(decision))
+			actionMade = ActionDecision(decision);
+			if (actionMade)
 			{
-				actionMade = true;
-				switch (decision.action)
-				{
-					case Actions.ATTACK:
-						currTarget = enemyList[0].transform.position;
-						Attack();
-						break;
-					case Actions.MOVE_BACK:
-						Vector3 backTarget = this.transform.position + backMovementMod;
-						MoveTowards(backTarget);
-						break;
-					case Actions.MOVE_FORWARD:
-						Vector3 forTarget = this.transform.position + -backMovementMod;
-						MoveTowards(forTarget);
-						break;
-					case Actions.MOVE_ENEMY:
-						MoveTowards(enemyList[0].transform.position);
-						break;
-					case Actions.REST:
-						Rest();
-						break;
-				}
+				break;
 			}
 		}
 		if (!actionMade)
 		{
 			Rest();
 		}
+	}
+
+	bool ActionDecision(ConditionalItem decision)
+	{
+		bool actionMade = false;
+		if (ValidAction(decision))
+		{
+			actionMade = true;
+			switch (decision.action)
+			{
+				case Actions.ATTACK:
+					currTarget = enemyList[0].transform.position;
+					Attack();
+					break;
+				case Actions.MOVE_BACK:
+					Vector3 backTarget = this.transform.position + backMovementMod;
+					currAction = Actions.MOVE_BACK;
+					MoveTowards(backTarget);
+					break;
+				case Actions.MOVE_FORWARD:
+					Vector3 forTarget = this.transform.position + -backMovementMod;
+					currAction = Actions.MOVE_FORWARD;
+					MoveTowards(forTarget);
+					break;
+				case Actions.MOVE_ENEMY:
+					currAction = Actions.MOVE_ENEMY;
+					MoveTowards(enemyList[0].transform.position);
+					break;
+				case Actions.REST:
+					Rest();
+					break;
+			}
+		}
+		return actionMade;
 	}
 
 	protected override void AggressiveStrat()
@@ -85,32 +99,11 @@ public class BassUnitScript : UnitScript
 			ConditionalItem decision = aggressiveAI[i];
 			if (ValidAction(decision))
 			{
-				actionMade = true;
-				switch (decision.action)
+				actionMade = ActionDecision(decision);
+				if (actionMade)
 				{
-					case Actions.ATTACK:
-						currTarget = enemyList[0].transform.position;
-						Attack();
-						break;
-					case Actions.MOVE_BACK:
-						Vector3 backTarget = this.transform.position + backMovementMod;
-						MoveTowards(backTarget);
-						break;
-					case Actions.MOVE_FORWARD:
-						Vector3 forTarget = this.transform.position + -backMovementMod;
-						MoveTowards(forTarget);
-						break;
-					case Actions.MOVE_ENEMY:
-						MoveTowards(enemyList[0].transform.position);
-						break;
-					case Actions.REST:
-						Rest();
-						break;
+					break;
 				}
-			}
-			if (actionMade)
-			{
-				break;
 			}
 		}
 		if (!actionMade)
@@ -125,30 +118,10 @@ public class BassUnitScript : UnitScript
 		for (int i = 0; i < defensiveAI.Count; i++)
 		{
 			ConditionalItem decision = defensiveAI[i];
-			if (ValidAction(decision))
+			actionMade = ActionDecision(decision);
+			if (actionMade)
 			{
-				actionMade = true;
-				switch (decision.action)
-				{
-					case Actions.ATTACK:
-						currTarget = enemyList[0].transform.position;
-						Attack();
-						break;
-					case Actions.MOVE_BACK:
-						Vector3 backTarget = this.transform.position + backMovementMod;
-						MoveTowards(backTarget);
-						break;
-					case Actions.MOVE_FORWARD:
-						Vector3 forTarget = this.transform.position + -backMovementMod;
-						MoveTowards(forTarget);
-						break;
-					case Actions.MOVE_ENEMY:
-						MoveTowards(enemyList[0].transform.position);
-						break;
-					case Actions.REST:
-						Rest();
-						break;
-				}
+				break;
 			}
 		}
 		if (!actionMade)
@@ -168,11 +141,6 @@ public class BassUnitScript : UnitScript
 		newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkCost);
 		TakeDamage(atkCost);
 		currAction = Actions.ATTACK;
-	}
-
-	// Use this for initialization
-	void Start () {
-	
 	}
 	
 	// Update is called once per frame
