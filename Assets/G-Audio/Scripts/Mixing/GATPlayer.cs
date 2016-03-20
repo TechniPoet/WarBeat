@@ -41,6 +41,7 @@ namespace GAudio
 			
 			lock( _samplesToEnqueue )
 			{
+				Debug.Log(_samplesToEnqueue);
 				_samplesToEnqueue.Enqueue( newSample );
 			}
 			
@@ -605,6 +606,7 @@ namespace GAudio
 			
 			lock( _pool )
 			{
+				Debug.Log("Push Sample");
 				_pool.Push( sample );
 			}
 		}
@@ -631,7 +633,7 @@ namespace GAudio
 			
 			shouldRemove = false;
 			sample = _scheduledSamples.head.next; // caching the first item of the linked queue: thread safe iteration
-			
+			/*
 			if( sample != null ) 
 			{
 				double nextBufferDSPTime = AudioSettings.dspTime + GATInfo.AudioBufferDuration;
@@ -657,7 +659,7 @@ namespace GAudio
 					_playingSamples.Enqueue( _discardedSamples ); // no need to lock on the playing queue: it is only accessed by the audio thread
 				}
 			}
-			
+			*/
 			//*************************************************************************
 			//Second, we check the PlayImmediate queue
 			
@@ -665,6 +667,7 @@ namespace GAudio
 			{
 				if( _samplesToEnqueue.head.next != null )
 				{
+					Debug.Log("Added samples to play");
 					_playingSamples.Enqueue( _samplesToEnqueue );
 					_samplesToEnqueue.Clear();
 				}
@@ -675,7 +678,10 @@ namespace GAudio
 			sample = _playingSamples.head.next;
 			
 			if( onPlayerWillMix != null )
+			{
 				onPlayerWillMix();
+			}
+				
 			
 			//Even if there is no samples to play, filters might add to the mix:
 			if( sample == null )
@@ -694,6 +700,7 @@ namespace GAudio
 					}
 				}
 				
+				
 				//Check Master Filters
 				if( _FiltersHandler.HasFilters )
 				{
@@ -709,8 +716,12 @@ namespace GAudio
 				//Stop there.
 				if( onPlayerDidMix != null )
 					onPlayerDidMix();
+
 				
 				return;
+			}
+			else {
+				Debug.Log("non null");
 			}
 			
 			shouldRemove = false; 
@@ -728,6 +739,7 @@ namespace GAudio
 			//Then, we remove samples which ended and clip the mix if needed
 			if( shouldRemove )
 			{
+				Debug.Log("should remove");
 				_playingSamples.TrimAndReleaseDiscarded();
 			}
 			
@@ -768,6 +780,7 @@ namespace GAudio
 					gain -= deltaGain;
 				}
 			}
+			
 		}
 		
 		#endregion

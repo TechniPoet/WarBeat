@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections;
 using Actions = ConstFile.Actions;
 
@@ -30,18 +29,11 @@ public class TrebleUnitScript : UnitScript
 
     protected override void NeutralStrat()
     {
-		if (team == 0)
-			Debug.Log("Neutral");
         Rest();
     }
 
     protected override void AggressiveStrat()
     {
-		if (team == 0)
-		{
-			Debug.Log("Aggressive");
-		}
-		
 		for (int i = 0; i < enemyList.Count; i++)
         {
             int front = team == 0 ? 1 : -1;

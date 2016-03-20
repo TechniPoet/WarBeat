@@ -18,10 +18,14 @@ namespace GAudio
 {
 	public class GATSoundBank : ScriptableObject
 	{
+		public delegate void Finished(Dictionary<string, GATData> dict);
+		public Finished loadFinished;
+
 		public int SampleRate{ get{ return _sampleRate; } }
 		[ SerializeField ]
 		int _sampleRate;
-		
+
+		int clipsLoaded = 0;
 		public List< GATSampleInfo > SampleInfos{ get{ return _sampleInfos; } }
 		[ SerializeField ]
 		List< GATSampleInfo > _sampleInfos = new List< GATSampleInfo >();
@@ -136,19 +140,26 @@ namespace GAudio
 			return largest;
 		}
 		
-		public Dictionary< string, GATData > LoadAll( GATDataAllocationMode allocationMode )
+		public IEnumerator LoadAll( GATDataAllocationMode allocationMode )
 		{
+			clipsLoaded = 0;
+			Debug.Log("start Loading");
 			Dictionary< string, GATData > target = new Dictionary<string, GATData>( _sampleInfos.Count );
 			int i;
 			for( i = 0; i < _sampleInfos.Count; i++ )
 			{
 				LoadSample( _sampleInfos[ i ], target, allocationMode );
 			}
-
-			return target;
+			while (clipsLoaded != _sampleInfos.Count)
+			{
+				Debug.Log("clips loaded: " + clipsLoaded + " sampleCount: " + _sampleInfos.Count);
+				yield return null;
+			}
+			Debug.Log("got to the end");
+			loadFinished(target);
 		}
 
-		public Dictionary< string, GATData > LoadSamplesNamed( List< string > sampleNames, GATDataAllocationMode allocationMode )
+		public Dictionary<string, GATData> LoadSamplesNamed( List< string > sampleNames, GATDataAllocationMode allocationMode )
 		{
 			int i;
 			GATSampleInfo info;
@@ -162,7 +173,7 @@ namespace GAudio
 					LoadSample( info, target, allocationMode );
 				}
 			}
-
+			
 			return target;
 		}
 
@@ -204,24 +215,30 @@ namespace GAudio
 		{
 			if( info.IsStreamingAsset )
 			{
+				
 				#if UNITY_EDITOR
 				if( Application.isPlaying == false )
 				{
+					Debug.Log("Editor only ResourcesAsset");
 					LoadSampleFromResources( GATDataAllocationMode.Unmanaged, info, target );
 					return;
 				}
-				#endif
+#endif
+				Debug.Log("StreamingAsset");
 				LoadSampleFromStreamingAssets( allocationMode, info, target );
 			}
 			else
 			{
-				LoadSampleFromResources( allocationMode, info, target );
+				Debug.Log("ResourcesAsset");
+				UnitySingleton<CoroutineMaster>.Instance.StartCoroutine(LoadSampleFromResources(allocationMode, info, target));
+				
 			}
 		}
 		
-		void LoadSampleFromResources( GATDataAllocationMode mode, GATSampleInfo info, Dictionary< string, GATData > loadedSamples )
+		IEnumerator LoadSampleFromResources( GATDataAllocationMode mode, GATSampleInfo info, Dictionary< string, GATData > loadedSamples )
 		{
 			AudioClip clip;
+			/*
 			#if UNITY_EDITOR
 			if( Application.isPlaying ) //GZComment: simplifies memory management when trying things out in the editor, where performance is not crucial.
 			{
@@ -239,10 +256,14 @@ namespace GAudio
 			}
 			
 			#else
+			*/
 			clip = Resources.Load( info.PathInResources ) as AudioClip;
-			#endif
+			//#endif
 			
-			
+			while (clip.loadState != AudioDataLoadState.Loaded)
+			{
+				yield return null;
+			}
 			if( info.NumChannels == 1 )
 			{
 				GATData data;
@@ -255,8 +276,11 @@ namespace GAudio
 				for( int i = 0; i < info.NumChannels; i++ )
 				{
 					loadedSamples.Add( string.Format( "{0}_{1}", info.Name, i ), channelsData[i] );
+					//Debug.Log("loaded " + string.Format("{0}_{1}", info.Name, i));
 				}
 			}
+			clipsLoaded++;
+			
 			
 			#if UNITY_EDITOR
 			if( Application.isPlaying )
@@ -264,6 +288,7 @@ namespace GAudio
 				Resources.UnloadAsset( ( Object )clip );
 			}
 			#else
+			
 			Resources.UnloadAsset( clip );
 			#endif
 		}

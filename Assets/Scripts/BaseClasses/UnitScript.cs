@@ -135,6 +135,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         enemyList.Add(mainTarget.gameObject);
 
         //Subscriptions
+		//if (MusicManager._Pulse != null)
         pulse = MusicManager._Pulse;
         pulse.SubscribeToPulse(this);
         MusicManager.units.Add(this);

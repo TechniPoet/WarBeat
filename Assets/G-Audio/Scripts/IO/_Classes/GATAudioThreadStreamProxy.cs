@@ -27,6 +27,7 @@ namespace GAudio
 		{
 			if( _onAudioThreadStream != null )
 			{
+				Debug.Log("Broadcasting");
 				_onAudioThreadStream( data, offset, isEmptyData, this );
 			}
 		}
@@ -34,6 +35,7 @@ namespace GAudio
 		#region IGATAudioThreadStream explicit implementation
 		public void AddAudioThreadStreamClient( IGATAudioThreadStreamClient client )
 		{
+			Debug.Log("added Stream");
 			_onAudioThreadStream += client.HandleAudioThreadStream;
 		}
 		
@@ -41,6 +43,7 @@ namespace GAudio
 		{
 			if( _onAudioThreadStream != null )
 			{
+				Debug.Log("removed Stream");
 				_onAudioThreadStream -= client.HandleAudioThreadStream;
 			}
 		}
