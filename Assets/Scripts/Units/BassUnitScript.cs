@@ -142,11 +142,6 @@ public class BassUnitScript : UnitScript
 		TakeDamage(atkCost);
 		currAction = Actions.ATTACK;
 	}
-
-	// Use this for initialization
-	void Start () {
-	
-	}
 	
 	// Update is called once per frame
 	public new void Update () {

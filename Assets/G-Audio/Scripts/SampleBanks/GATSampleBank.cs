@@ -117,7 +117,6 @@ namespace GAudio
 
 			if( _allSamples == null )
 			{
-				Debug.Log("Initializing Collections");
 				InitCollections();
 			}
 			StopAllCoroutines();
@@ -129,7 +128,6 @@ namespace GAudio
 
 		void LoadNewSamples(Dictionary<string, GATData> loadedSamples)
 		{
-			Debug.Log("Loaded");
 			foreach (KeyValuePair<string, GATData> pair in loadedSamples)
 			{
 				AddSample(pair.Value, pair.Key);

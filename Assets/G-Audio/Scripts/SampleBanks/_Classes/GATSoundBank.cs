@@ -143,7 +143,6 @@ namespace GAudio
 		public IEnumerator LoadAll( GATDataAllocationMode allocationMode )
 		{
 			clipsLoaded = 0;
-			Debug.Log("start Loading");
 			Dictionary< string, GATData > target = new Dictionary<string, GATData>( _sampleInfos.Count );
 			int i;
 			for( i = 0; i < _sampleInfos.Count; i++ )
@@ -152,10 +151,8 @@ namespace GAudio
 			}
 			while (clipsLoaded != _sampleInfos.Count)
 			{
-				Debug.Log("clips loaded: " + clipsLoaded + " sampleCount: " + _sampleInfos.Count);
 				yield return null;
 			}
-			Debug.Log("got to the end");
 			loadFinished(target);
 		}
 
@@ -229,7 +226,6 @@ namespace GAudio
 			}
 			else
 			{
-				Debug.Log("ResourcesAsset");
 				UnitySingleton<CoroutineMaster>.Instance.StartCoroutine(LoadSampleFromResources(allocationMode, info, target));
 				
 			}
