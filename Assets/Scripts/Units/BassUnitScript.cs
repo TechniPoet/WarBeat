@@ -6,12 +6,10 @@ public class BassUnitScript : UnitScript
 {
 
 	public GameObject bullet;
-	Vector3 backMovementMod;
+	
 	float aggrAtkDist;
 	float defAtkDist;
-	List<ConditionalItem> neutralAI;
-	List<ConditionalItem> aggressiveAI;
-	List<ConditionalItem> defensiveAI;
+	
 
 	public void BassSetup(int newTeam, GameObject target, float newMaxE,
 		float newStartE, float newGainRate, float newMoveCost, float newAtkCost,
@@ -22,14 +20,12 @@ public class BassUnitScript : UnitScript
 		currType = UnitType.BASS;
 		if (team == 0)
 		{
-			backMovementMod = new Vector3(-100, 0, 0);
 			neutralAI = AIManager.BassUnit.NeutralAI;
 			aggressiveAI = AIManager.BassUnit.AggressiveAI;
 			defensiveAI = AIManager.BassUnit.DefensiveAI;
 		}
 		else
 		{
-			backMovementMod = new Vector3(100, 0, 0);
 			neutralAI = AIManager.EnemyBassUnit.NeutralAI;
 			aggressiveAI = AIManager.EnemyBassUnit.AggressiveAI;
 			defensiveAI = AIManager.EnemyBassUnit.DefensiveAI;
@@ -37,100 +33,7 @@ public class BassUnitScript : UnitScript
 	}
 
 
-	#region Strategies
 
-	protected override void NeutralStrat()
-	{
-		bool actionMade = false;
-		for (int i = 0; i < neutralAI.Count; i++)
-		{
-			ConditionalItem decision = neutralAI[i];
-			actionMade = ActionDecision(decision);
-			if (actionMade)
-			{
-				break;
-			}
-		}
-		if (!actionMade)
-		{
-			Rest();
-		}
-	}
-
-	bool ActionDecision(ConditionalItem decision)
-	{
-		bool actionMade = false;
-		if (ValidAction(decision))
-		{
-			actionMade = true;
-			switch (decision.action)
-			{
-				case Actions.ATTACK:
-					currTarget = enemyList[0].transform.position;
-					Attack();
-					break;
-				case Actions.MOVE_BACK:
-					Vector3 backTarget = this.transform.position + backMovementMod;
-					currAction = Actions.MOVE_BACK;
-					MoveTowards(backTarget);
-					break;
-				case Actions.MOVE_FORWARD:
-					Vector3 forTarget = this.transform.position + -backMovementMod;
-					currAction = Actions.MOVE_FORWARD;
-					MoveTowards(forTarget);
-					break;
-				case Actions.MOVE_ENEMY:
-					currAction = Actions.MOVE_ENEMY;
-					MoveTowards(enemyList[0].transform.position);
-					break;
-				case Actions.REST:
-					Rest();
-					break;
-			}
-		}
-		return actionMade;
-	}
-
-	protected override void AggressiveStrat()
-	{
-		bool actionMade = false;
-		for (int i = 0; i < aggressiveAI.Count; i++)
-		{
-			ConditionalItem decision = aggressiveAI[i];
-			if (ValidAction(decision))
-			{
-				actionMade = ActionDecision(decision);
-				if (actionMade)
-				{
-					break;
-				}
-			}
-		}
-		if (!actionMade)
-		{
-			Rest();
-		}
-	}
-
-	protected override void DefensiveStrat()
-	{
-		bool actionMade = false;
-		for (int i = 0; i < defensiveAI.Count; i++)
-		{
-			ConditionalItem decision = defensiveAI[i];
-			actionMade = ActionDecision(decision);
-			if (actionMade)
-			{
-				break;
-			}
-		}
-		if (!actionMade)
-		{
-			Rest();
-		}
-	}
-
-	#endregion
 
 	protected override void Attack()
 	{

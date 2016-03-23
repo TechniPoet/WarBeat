@@ -13,7 +13,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
     public PulseModule pulse;
     public static PulseModule _Pulse;
 
-    public GATSampleBank sampleBank;
+    public GATActiveSampleBank sampleBank;
     public GATSoundBank toLoad;
     public int arenaSplit = 4;
     int numNotes = 4;
@@ -31,14 +31,6 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
         G,
     }
 
-	/*
-    string[] MidNoteNames = new string[7] 
-    { "paino_{0}_A_0", "paino_{0}_B_0",
-		"paino_{0}_C_0", "paino_{0}_D_0",
-		"paino_{0}_E_0", "paino_{0}_F_0",
-		"paino_{0}_G_0",
-	};
-	*/
 	string[] MidNoteNames = new string[4]
 	{ "paino_{0}_A_0",
 		"paino_{0}_C_0",

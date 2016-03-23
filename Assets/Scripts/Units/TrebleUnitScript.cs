@@ -22,59 +22,20 @@ public class TrebleUnitScript : UnitScript
         UnitSetup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
         newMoveSpeed, newAtkSpeed, newAtkLifeSpan);
 		currType = UnitType.TREBLE;
-    }
 
-
-    #region Strategies
-
-    protected override void NeutralStrat()
-    {
-        Rest();
-    }
-
-    protected override void AggressiveStrat()
-    {
-		for (int i = 0; i < enemyList.Count; i++)
-        {
-            int front = team == 0 ? 1 : -1;
-            if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._TUnit.aggrAtkDist && ((enemyList[i].transform.position.x - transform.position.x) * front) > 0)
-            {
-                currTarget = enemyList[i].transform.position;
-                Attack();
-                return;
-            }
-        }
-        if (energy < .4f * maxEnergy)
-        {
-            Rest();
-            return;
-        }
-        MoveTowards(mainTarget.position);
-    }
-
-    protected override void DefensiveStrat()
-    {
 		if (team == 0)
-			Debug.Log("Defensive");
-		for (int i = 0; i < enemyList.Count; i++)
-        {
-            int front = team == 0 ? 1 : -1;
-            if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._TUnit.defAtkDist)
-            {
-                currTarget = enemyList[i].transform.position;
-                Attack();
-                return;
-            }
-        }
-        if (energy < .8f * maxEnergy)
-        {
-            Rest();
-            return;
-        }
-        //MoveTowards(spawnPos);
-    }
-
-    #endregion
+		{
+			neutralAI = AIManager.TrebleUnit.NeutralAI;
+			aggressiveAI = AIManager.TrebleUnit.AggressiveAI;
+			defensiveAI = AIManager.TrebleUnit.DefensiveAI;
+		}
+		else
+		{
+			neutralAI = AIManager.EnemyTrebleUnit.NeutralAI;
+			aggressiveAI = AIManager.EnemyTrebleUnit.AggressiveAI;
+			defensiveAI = AIManager.EnemyTrebleUnit.DefensiveAI;
+		}
+	}
 
     
     protected override void Attack()
@@ -84,8 +45,10 @@ public class TrebleUnitScript : UnitScript
         atkDir *= .5f;
         Vector2 spawnPos = new Vector2(transform.position.x, transform.position.y) + atkDir;
         GameObject newBul = Instantiate(bullet, spawnPos, Quaternion.identity) as GameObject;
-        newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkLife);
+        newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkCost);
         TakeDamage(atkCost);
 		currAction = Actions.ATTACK;
-    }
+
+		
+	}
 }

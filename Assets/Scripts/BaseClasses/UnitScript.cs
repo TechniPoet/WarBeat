@@ -20,7 +20,11 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         AGGRESSIVE,
         DEFENSIVE,
     }
-	
+
+	protected List<ConditionalItem> neutralAI;
+	protected List<ConditionalItem> aggressiveAI;
+	protected List<ConditionalItem> defensiveAI;
+	Vector3 backMovementMod;
 	public ConstFile.Actions currAction;
     public Strategies[] actionPattern;
     public Transform mainTarget;
@@ -105,15 +109,104 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 
     protected abstract void Attack();
 
-    protected abstract void NeutralStrat();
+	#endregion
 
-    protected abstract void AggressiveStrat();
+	#region Strategies
 
-    protected abstract void DefensiveStrat();
+	protected void NeutralStrat()
+	{
+		bool actionMade = false;
+		for (int i = 0; i < neutralAI.Count; i++)
+		{
+			ConditionalItem decision = neutralAI[i];
+			actionMade = ActionDecision(decision);
+			if (actionMade)
+			{
+				break;
+			}
+		}
+		if (!actionMade)
+		{
+			Rest();
+		}
+	}
 
-    #endregion
+	bool ActionDecision(ConditionalItem decision)
+	{
+		bool actionMade = false;
+		if (ValidAction(decision))
+		{
+			actionMade = true;
+			switch (decision.action)
+			{
+				case Actions.ATTACK:
+					currTarget = enemyList[0].transform.position;
+					Attack();
+					break;
+				case Actions.MOVE_BACK:
+					Vector3 backTarget = this.transform.position + backMovementMod;
+					currAction = Actions.MOVE_BACK;
+					MoveTowards(backTarget);
+					break;
+				case Actions.MOVE_FORWARD:
+					Vector3 forTarget = this.transform.position + -backMovementMod;
+					currAction = Actions.MOVE_FORWARD;
+					MoveTowards(forTarget);
+					break;
+				case Actions.MOVE_ENEMY:
+					currAction = Actions.MOVE_ENEMY;
+					MoveTowards(enemyList[0].transform.position);
+					break;
+				case Actions.REST:
+					Rest();
+					break;
+			}
+		}
+		return actionMade;
+	}
 
-    public void UnitSetup(int newTeam, GameObject target, float newMaxE,
+	protected void AggressiveStrat()
+	{
+		bool actionMade = false;
+		for (int i = 0; i < aggressiveAI.Count; i++)
+		{
+			ConditionalItem decision = aggressiveAI[i];
+			if (ValidAction(decision))
+			{
+				actionMade = ActionDecision(decision);
+				if (actionMade)
+				{
+					break;
+				}
+			}
+		}
+		if (!actionMade)
+		{
+			Rest();
+		}
+	}
+
+	protected void DefensiveStrat()
+	{
+		bool actionMade = false;
+		for (int i = 0; i < defensiveAI.Count; i++)
+		{
+			ConditionalItem decision = defensiveAI[i];
+			actionMade = ActionDecision(decision);
+			if (actionMade)
+			{
+				break;
+			}
+		}
+		if (!actionMade)
+		{
+			Rest();
+		}
+	}
+
+	#endregion
+
+	public void UnitSetup(int newTeam, GameObject target, float newMaxE,
         float newStartE, float newGainRate, float newMoveCost, float newAtkCost,
         float newMoveSpeed, float newAtkSpeed, float newAtkLifeSpan)
     {
@@ -142,17 +235,24 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         GameManager.AddUnit += EnemyAdd;
         GameManager.RemoveUnit += EnemyRemove;
 
-        // Set color
-        switch (team)
+		
+
+		// Set color
+		switch (team)
         {
             case 0:
 				GetComponentInChildren<SpriteRenderer>().color = Color.blue;
-                break;
+
+				backMovementMod = new Vector3(-100, 0, 0);
+				break;
             case 1:
 				GetComponentInChildren<SpriteRenderer>().color = Color.red;
 				actionPattern = new Strategies[8] {Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.DEFENSIVE, Strategies.DEFENSIVE,
 				Strategies.AGGRESSIVE, Strategies.NEUTRAL,Strategies.AGGRESSIVE, Strategies.DEFENSIVE};
-                break;
+
+				backMovementMod = new Vector3(100, 0, 0);
+				
+				break;
         }
     }
 	

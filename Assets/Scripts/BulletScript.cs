@@ -6,7 +6,7 @@ public class BulletScript : MonoBehaviour {
     float speed;
     Vector2 dir;
     int teamNum;
-	float energyPerUnit = 10;
+	float energyPerUnit = 5;
     public float energy = 34;
 	public bool dead = false;
 
@@ -27,7 +27,7 @@ public class BulletScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         transform.position = new Vector2(transform.position.x, transform.position.y) + (dir * speed * Time.deltaTime);
-        energy -= energyPerUnit * (dir * speed * Time.deltaTime).magnitude;
+        energy -= energyPerUnit * Mathf.Abs((dir * speed * Time.deltaTime).magnitude);
         if (energy <= 0)
         {
 			dead = true;
@@ -68,9 +68,11 @@ public class BulletScript : MonoBehaviour {
                 {
 					float oldDmg = bul.GetDamage();
 					bul.TakeDamage(energy);
-					TakeDamage(oldDmg);
-                }
-                break;
+					this.TakeDamage(oldDmg);
+					
+				}
+				Physics2D.IgnoreCollision(GetComponent<Collider2D>(), col.collider);
+				break;
             default:
 				this.Destroy();
                 break;
@@ -92,7 +94,7 @@ public class BulletScript : MonoBehaviour {
 
 	public void TakeDamage(float dmg)
 	{
-		energy -= dmg;
+		energy -= Mathf.Abs(dmg);
 	}
 
     public void Destroy()

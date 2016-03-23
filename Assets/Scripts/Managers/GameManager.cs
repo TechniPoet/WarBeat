@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
@@ -57,6 +58,9 @@ public class BassUnit
 
 public class GameManager : MonoBehaviour
 {
+	public Button bassButton;
+	public Button trebleButton;
+	
     public static TrebleUnit _TUnit;
 	public static BassUnit _BUnit;
     public static TeamBase _LTeam;
@@ -130,8 +134,10 @@ public class GameManager : MonoBehaviour
         
         if (leftTeam.baseScript.energy <= 0 || rightTeam.baseScript.energy <= 0)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            SceneManager.LoadScene("AISetup");
         }
+		bassButton.interactable = (leftTeam.baseScript.energy - _BUnit.spawnCost) > 0;
+		trebleButton.interactable = (leftTeam.baseScript.energy - _TUnit.spawnCost) > 0;
 	}
 
     
