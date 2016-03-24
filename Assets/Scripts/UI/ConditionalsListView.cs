@@ -24,6 +24,7 @@ public class ConditionalsListView : ListViewCustom<ConditionalListViewComponent,
 			DataSource[SelectedIndex].cond2Ind = editBox.tempItem.cond2Ind;
 			DataSource[SelectedIndex].cond2Val = editBox.tempItem.cond2Val;
 			DataSource[SelectedIndex].greater = editBox.tempItem.greater;
+			DataSource[SelectedIndex].note = editBox.tempItem.note;
 		}
 	}
 

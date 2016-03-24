@@ -22,9 +22,9 @@ public class ValDropdown : MonoBehaviour
 			Dropdown.OptionData opt = new Dropdown.OptionData(ConstFile.ConditionOptionsText[i]);
 			varCheck.options.Add(opt);
 		}
+
 		varCheck.value = 0;
 		
-		//varCheck.onValueChanged.AddListener(DropDownChange);
 		spinObj.SetActive(varCheck.value == (int)CondOptions.VALUE);
 	}
 	
