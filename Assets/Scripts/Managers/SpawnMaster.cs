@@ -81,7 +81,7 @@ public class SpawnMaster : MonoBehaviour {
 			newUnit.transform.Rotate(new Vector3(0,0, 180));
 		}
 
-		GM.AddNewUnit(team, ref newUnit);
+		GM.AddNewUnit(team, ref newUnit, UnitScript.UnitType.TREBLE);
 	}
 
 
@@ -121,6 +121,6 @@ public class SpawnMaster : MonoBehaviour {
 			newUnit.transform.Rotate(new Vector3(0, 0, 180));
 		}
 
-		GM.AddNewUnit(team, ref newUnit);
+		GM.AddNewUnit(team, ref newUnit, UnitScript.UnitType.BASS);
 	}
 }

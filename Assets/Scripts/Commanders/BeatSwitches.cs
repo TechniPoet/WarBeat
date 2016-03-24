@@ -7,13 +7,15 @@ public class BeatSwitches : MonoBehaviour {
 
     public int team = 0;
     public int beat;
+	[SerializeField]
+	public UnitScript.UnitType type;
     public Image beatImage;
     public Switch neutralSwitch;
     public Switch defensiveSwitch;
     public Switch aggressiveSwitch;
     float waitTime = .6f;
 
-    public delegate void switchedEvent(int team, int beat, UnitScript.Strategies action);
+    public delegate void switchedEvent(int team, int beat, UnitScript.Strategies action, UnitScript.UnitType type);
     public event switchedEvent SwitchChanged;
 
     [System.NonSerialized]
@@ -58,7 +60,7 @@ public class BeatSwitches : MonoBehaviour {
             neutral = true;
             defensive = false;
             aggressive = false;
-            SwitchChanged(team, beat, UnitScript.Strategies.NEUTRAL);
+            SwitchChanged(team, beat, UnitScript.Strategies.NEUTRAL, type);
         }
         UpdateSwitches();
     }
@@ -74,7 +76,7 @@ public class BeatSwitches : MonoBehaviour {
             neutral = true;
             defensive = false;
             aggressive = false;
-            SwitchChanged(team, beat, UnitScript.Strategies.NEUTRAL);
+            SwitchChanged(team, beat, UnitScript.Strategies.NEUTRAL, type);
         }
         UpdateSwitches();
     }
@@ -91,7 +93,7 @@ public class BeatSwitches : MonoBehaviour {
             neutral = false;
             defensive = true;
             aggressive = false;
-            SwitchChanged(team, beat, UnitScript.Strategies.DEFENSIVE);
+            SwitchChanged(team, beat, UnitScript.Strategies.DEFENSIVE, type);
         }
         UpdateSwitches();
     }
@@ -108,7 +110,7 @@ public class BeatSwitches : MonoBehaviour {
             neutral = false;
             defensive = true;
             aggressive = false;
-            SwitchChanged(team, beat, UnitScript.Strategies.DEFENSIVE);
+            SwitchChanged(team, beat, UnitScript.Strategies.DEFENSIVE, type);
         }
         UpdateSwitches();
     }
@@ -125,7 +127,7 @@ public class BeatSwitches : MonoBehaviour {
             neutral = false;
             defensive = false;
             aggressive = true;
-            SwitchChanged(team, beat, UnitScript.Strategies.AGGRESSIVE);
+            SwitchChanged(team, beat, UnitScript.Strategies.AGGRESSIVE, type);
         }
         UpdateSwitches();
     }
@@ -142,7 +144,7 @@ public class BeatSwitches : MonoBehaviour {
             neutral = false;
             defensive = false;
             aggressive = true;
-            SwitchChanged(team, beat, UnitScript.Strategies.AGGRESSIVE);
+            SwitchChanged(team, beat, UnitScript.Strategies.AGGRESSIVE, type);
         }
         UpdateSwitches();
     }

@@ -87,7 +87,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         lastPulseTime = Time.time;
     }
 
-    protected void EnemyAdd(int eTeam, ref GameObject enemy)
+    protected void EnemyAdd(int eTeam, ref GameObject enemy, UnitType type)
     {
         if (eTeam != this.team)
         {
@@ -95,7 +95,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         }
     }
 
-    protected void EnemyRemove(int eTeam, ref GameObject enemy)
+    protected void EnemyRemove(int eTeam, ref GameObject enemy, UnitType type)
     {
         if (eTeam != this.team)
         {
@@ -284,7 +284,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         if (energy <= 0)
         {
             MusicManager.units.Remove((UnitScript)this);
-            GameManager.RemoveDeadUnit(team, this.gameObject);
+            GameManager.RemoveDeadUnit(team, this.gameObject, currType);
             pulse.UnsubscribeToPulse(this);
             Destroy(this.gameObject);
         }
@@ -339,5 +339,11 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 		return retVal;
 	}
 
+	public void UpdateActionPattern(Strategies strat)
+	{
+		Debug.Log("New strat: " + strat + " old strat: " + actionPattern[0]);
+		actionPattern[0] = strat;
+		Debug.Log("set strat: " + actionPattern[0]);
+	}
     
 }

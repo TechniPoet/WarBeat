@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
     public static Transform _Right;
     public static int _ArenaDiv;
 
-    public delegate void UnitDel(int team, ref GameObject unit);
+    public delegate void UnitDel(int team, ref GameObject unit, UnitScript.UnitType type);
     public static event UnitDel AddUnit;
     public static event UnitDel RemoveUnit;
 
@@ -97,15 +97,22 @@ public class GameManager : MonoBehaviour
     public TeamBase rightTeam;
 
     public static List<GameObject> _LeftUnits;
+	public static List<GameObject> _LeftBass;
+	public static List<GameObject> _LeftTreble;
     public static List<GameObject> _RightUnits;
-
+	public static List<GameObject> _RightBass;
+	public static List<GameObject> _RightTreble;
 
 	// Use this for initialization
 	void Awake ()
     {
         _LeftUnits = new List<GameObject>();
-        _RightUnits = new List<GameObject>();
-        UpdateStatics();
+		_LeftBass = new List<GameObject>();
+		_LeftTreble = new List<GameObject>();
+		_RightUnits = new List<GameObject>();
+		_RightBass = new List<GameObject>();
+		_RightTreble = new List<GameObject>();
+		UpdateStatics();
         _Init = true;
         leftTeam.baseScript.Setup(leftTeam.baseStartEnergy, leftTeam.baseMaxEnergy, leftTeam.energyGainPerSecond);
         rightTeam.baseScript.Setup(rightTeam.baseStartEnergy, rightTeam.baseMaxEnergy, rightTeam.energyGainPerSecond);
@@ -143,31 +150,67 @@ public class GameManager : MonoBehaviour
     
 
     // Adds new unit to proper list and sends event to all listeners.
-    public static void AddNewUnit(int team, ref GameObject unit)
+    public static void AddNewUnit(int team, ref GameObject unit, UnitScript.UnitType type)
     {
         switch(team)
         {
             case 0:
                 _LeftUnits.Add(unit);
+				switch (type)
+				{
+					case UnitScript.UnitType.BASS:
+						_LeftBass.Add(unit);
+						break;
+					case UnitScript.UnitType.TREBLE:
+						_LeftTreble.Add(unit);
+						break;
+				}
                 break;
             case 1:
                 _RightUnits.Add(unit);
-                break;
+				switch (type)
+				{
+					case UnitScript.UnitType.BASS:
+						_RightBass.Add(unit);
+						break;
+					case UnitScript.UnitType.TREBLE:
+						_RightTreble.Add(unit);
+						break;
+				}
+				break;
         }
-        AddUnit(team, ref unit);
+        AddUnit(team, ref unit, type);
     }
 
-    public static void RemoveDeadUnit(int team, GameObject unit)
+    public static void RemoveDeadUnit(int team, GameObject unit, UnitScript.UnitType type)
     {
         switch (team)
         {
             case 0:
                 _LeftUnits.Remove(unit);
-                break;
+				switch (type)
+				{
+					case UnitScript.UnitType.BASS:
+						_LeftBass.Remove(unit);
+						break;
+					case UnitScript.UnitType.TREBLE:
+						_LeftTreble.Remove(unit);
+						break;
+				}
+				break;
             case 1:
                 _RightUnits.Remove(unit);
-                break;
+				switch (type)
+				{
+					case UnitScript.UnitType.BASS:
+						_RightUnits.Remove(unit);
+						break;
+					case UnitScript.UnitType.TREBLE:
+						_RightUnits.Remove(unit);
+						break;
+				}
+				break;
         }
-        RemoveUnit(team, ref unit);
+        RemoveUnit(team, ref unit, type);
     }
 }
