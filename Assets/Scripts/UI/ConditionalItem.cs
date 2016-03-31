@@ -10,6 +10,7 @@ public class ConditionalItem
 	public ConstFile.ConditionOptions cond2Ind;
 	public float cond2Val;
 	public ConstFile.Actions action;
+	public ConstFile.Notes note;
 	string sentence;
 
 	public ConditionalItem()
@@ -20,6 +21,7 @@ public class ConditionalItem
 		greater = true;
 		cond2Ind = ConstFile.ConditionOptions.VALUE;
 		action = ConstFile.Actions.REST;
+		note = ConstFile.Notes.QUARTER;
 	}
 	public string GetSentence()
 	{
@@ -27,7 +29,7 @@ public class ConditionalItem
 		string cond2String = ConditionString(cond2Ind, false);
 		string boolCondString = greater ? ">" : "<";
 		string actionString = ActionString(action);
-		return string.Format("If {0} {1} {2}, {3}", cond1String, boolCondString, cond2String, actionString);
+		return string.Format("If {0} {1} {2}, {3} for {4} note", cond1String, boolCondString, cond2String, actionString, note.ToString());
 	}
 
 

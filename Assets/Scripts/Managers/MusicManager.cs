@@ -15,6 +15,12 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 
     public GATActiveSampleBank sampleBank;
     public GATSoundBank toLoad;
+
+	int BPM = 120;
+
+	GATEnvelope quarterEnv;
+	GATEnvelope eigthEnv;
+
     public int arenaSplit = 4;
     int numNotes = 4;
     public static bool _PInit = false;
@@ -75,6 +81,19 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 
     }
 
+	GATEnvelope CreateEnvelope(ConstFile.Notes note)
+	{
+		float sampleRate = 44100;
+
+		int len = Mathf.FloorToInt( (ConstFile.NoteBPMCalcs[(int)note]/BPM) * sampleRate);
+		int fadeIn = 0;
+		int fadeOut = Mathf.FloorToInt( (sampleRate * len) / 4);
+		int offset = 0;
+		bool normalize = false;
+
+		return new GATEnvelope(len, fadeIn, fadeOut, offset, normalize);
+	}
+
 	void StartPulse()
 	{
 		_Pulse.SubscribeToPulse(this);
@@ -88,6 +107,8 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 		_PInit = true;
 		sampleBank.SoundBank = toLoad;
 		sampleBank.LoadAll();
+		quarterEnv = CreateEnvelope(ConstFile.Notes.QUARTER);
+		eigthEnv = CreateEnvelope(ConstFile.Notes.EIGHTH);
 		/*
 		yield return new WaitForSeconds(.1f);
 		sampleBank.UnloadAll();
@@ -154,7 +175,9 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
     public void OnPulse(IGATPulseInfo pulseInfo)
     {
         curr_beat = pulseInfo.StepIndex;
-		//GATData mySampleData = sampleBank.GetAudioData("paino_3_A_0");
+		GATData mySampleData = sampleBank.GetAudioData("paino_3_A_0");
+		IGATProcessedSample sample = sampleBank.GetProcessedSample("paino_3_A_0", quarterEnv);
+		sample.Play(0);
 		//GATManager.DefaultPlayer.PlayData(mySampleData, 0, 1);
 		pulseNow = true;
     }

@@ -9,6 +9,7 @@ public class ConditionalEditBox : MonoBehaviour {
 	public Dropdown condBool;
 	public ValDropdown cond2;
 	public Dropdown actionDropdown;
+	public Dropdown noteDropdown;
 	public ConditionalItem tempItem;
 
 	// Use this for initialization
@@ -18,6 +19,12 @@ public class ConditionalEditBox : MonoBehaviour {
 		{
 			Dropdown.OptionData opt = new Dropdown.OptionData(ConstFile.ActionsText[i]);
 			actionDropdown.options.Add(opt);
+		}
+		noteDropdown.ClearOptions();
+		for (int i = 0; i < 4; i++)
+		{
+			Dropdown.OptionData opt = new Dropdown.OptionData(((ConstFile.Notes)i).ToString());
+			noteDropdown.options.Add(opt);
 		}
 	}
 
@@ -30,6 +37,7 @@ public class ConditionalEditBox : MonoBehaviour {
 		tempItem.cond1Val = cond1.currVal;
 		tempItem.cond2Val = cond2.currVal;
 		tempItem.greater = condBool.value == 0 ? true : false;
+		tempItem.note = (ConstFile.Notes) noteDropdown.value;
 	}
 
 	public void SetVals(ConditionalItem newItem)
@@ -40,5 +48,6 @@ public class ConditionalEditBox : MonoBehaviour {
 		cond2.spin.Value = newItem.cond2Val;
 		condBool.value = newItem.greater ? 0 : 1;
 		actionDropdown.value = (int)newItem.action;
+		noteDropdown.value = (int)newItem.note;
 	}
 }
