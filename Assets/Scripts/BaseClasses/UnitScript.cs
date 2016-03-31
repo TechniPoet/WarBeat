@@ -50,6 +50,9 @@ public abstract class UnitScript : Mortal, IGATPulseClient
     protected float lastPulseTime = 0;
     protected float deltaPulseTime = 0;
 
+
+	Vector2 gridLocation;
+
     #region Pulse Methods
     void IGATPulseClient.OnPulse(IGATPulseInfo pulseInfo)
     {
@@ -254,6 +257,10 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 				
 				break;
         }
+
+		gridLocation = ArenaGrid.ClosestGridPoint(transform.position);
+		transform.position = ArenaGrid.GridToWorldPos(gridLocation);
+		
     }
 	
 	// Update is called once per frame
@@ -266,12 +273,19 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 
     protected void MoveTowards(Vector2 tar)
     {
-		//currAction = Actions.MOVE;
-		TakeDamage(moveCost);
+		
         Vector2 moveDir = tar - new Vector2(transform.position.x, transform.position.y);
         moveDir.Normalize();
-        transform.position = new Vector2(transform.position.x, transform.position.y) + (moveDir * moveSpeed /* Time.deltaTime*/);
-    }
+		ConstFile.Direction dir = MathUtil.MoveDir(moveDir);
+		Vector2 temp = ConstFile.DirectionVectors[(int)dir] + gridLocation;
+		if (!ArenaGrid.ValidGridPos(temp))
+		{
+			Rest();
+		}
+		gridLocation = temp;
+        transform.position = ArenaGrid.GridToWorldPos(gridLocation);
+		TakeDamage(moveCost);
+	}
 
     protected void Rest()
     {
@@ -341,9 +355,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 
 	public void UpdateActionPattern(Strategies strat)
 	{
-		Debug.Log("New strat: " + strat + " old strat: " + actionPattern[0]);
 		actionPattern[0] = strat;
-		Debug.Log("set strat: " + actionPattern[0]);
 	}
     
 }

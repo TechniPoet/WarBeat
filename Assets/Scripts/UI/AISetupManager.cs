@@ -97,6 +97,6 @@ public class AISetupManager : MonoBehaviour
 		SaveUtil.SaveList(EnemyTreble.NeutralList, ENEMY_TREBLE_NEU_LIST);
 
 
-		SceneManager.LoadScene("Test");
+		SceneManager.LoadScene("GridLevel");
 	}
 }
