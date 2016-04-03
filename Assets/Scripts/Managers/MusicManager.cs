@@ -82,7 +82,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 
     }
 
-	GATEnvelope CreateEnvelope(ConstFile.Notes note)
+	public static GATEnvelope CreateEnvelope(ConstFile.Notes note, float BPM)
 	{
 		float sampleRate = 44100;
 
@@ -97,7 +97,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 
 	void StartPulse()
 	{
-		//_Pulse.SubscribeToPulse(this);
+		_Pulse.SubscribeToPulse(this);
 		sampleBank.LoadFinished -= StartPulse;
 	}
 
@@ -108,8 +108,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 		_PInit = true;
 		sampleBank.SoundBank = toLoad;
 		sampleBank.LoadAll();
-		quarterEnv = CreateEnvelope(ConstFile.Notes.QUARTER);
-		eigthEnv = CreateEnvelope(ConstFile.Notes.EIGHTH);
+		
 		/*
 		yield return new WaitForSeconds(.1f);
 		sampleBank.UnloadAll();
@@ -173,15 +172,48 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
         _Pulse.UnsubscribeToPulse(this);
     }
 
-    public void OnPulse(IGATPulseInfo pulseInfo)
+
+	string[] CNotes = new string[]
+	{
+		"paino_{0}_C_0",
+		"paino_{0}_E_0",
+		"paino_{0}_G_0",
+	};
+
+	string[] AmNotes = new string[]
+	{
+		"paino_{0}_A_0",
+		"paino_{0}_C_0",
+		"paino_{0}_G_0",
+	};
+
+	string[] FNotes = new string[]
+	{
+		"paino_{0}_F_0",
+		"paino_{0}_A_0",
+		"paino_{0}_C_0",
+	};
+
+	string[] GNotes = new string[]
+	{
+		"paino_{0}_G_0",
+		"paino_{0}_B_0",
+		"paino_{0}_D_0",
+	};
+
+	public void OnPulse(IGATPulseInfo pulseInfo)
     {
-        curr_beat = pulseInfo.StepIndex;
-		GATData mySampleData = sampleBank.GetAudioData("paino_3_A_0");
-		IGATProcessedSample sample = sampleBank.GetProcessedSample("paino_3_A_0", quarterEnv);
-		sample.Play(0);
+        
+		//GATData mySampleData = sampleBank.GetAudioData("paino_3_A_0");
+		//IGATProcessedSample sample = sampleBank.GetProcessedSample("paino_3_A_0", quarterEnv);
+		//sample.Play(0);
 		//GATManager.DefaultPlayer.PlayData(mySampleData, 0, 1);
-		pulseNow = true;
-    }
+		//pulseNow = true;
+		
+		/*
+		
+		*/
+	}
 
     public void PulseStepsDidChange(bool[] newSteps)
     {

@@ -6,6 +6,17 @@ using System;
 using Actions = ConstFile.Actions;
 using CondOptions = ConstFile.ConditionOptions;
 
+public class PlayInstructs
+{
+	public Actions action;
+	public ConstFile.Notes note;
+	public PlayInstructs(Actions newAct, ConstFile.Notes newNote)
+	{
+		action = newAct;
+		note = newNote;
+	}
+}
+
 public abstract class UnitScript : Mortal, IGATPulseClient
 {
 	public enum UnitType
@@ -26,6 +37,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 	protected List<ConditionalItem> defensiveAI;
 	Vector3 backMovementMod;
 	public ConstFile.Actions currAction;
+	public ConstFile.Notes currNote;
     public Strategies[] actionPattern;
     public Transform mainTarget;
     
@@ -36,6 +48,23 @@ public abstract class UnitScript : Mortal, IGATPulseClient
     protected Vector2 goalPos;
     protected Vector2 currTarget;
 
+	protected int NoteMult
+	{
+		get
+		{
+			switch(currNote)
+			{
+				case ConstFile.Notes.EIGHTH:
+					return 1;
+				case ConstFile.Notes.QUARTER:
+					return 2;
+				case ConstFile.Notes.HALF:
+					return 3;
+				default:
+					return 1;
+			}
+		}
+	}
     // pulse variables
     protected PulseModule pulse;
     protected int curr_beat = 0;
@@ -50,8 +79,10 @@ public abstract class UnitScript : Mortal, IGATPulseClient
     protected float lastPulseTime = 0;
     protected float deltaPulseTime = 0;
 
+	public static int idCounter;
+	public int id;
 
-	Vector2 gridLocation;
+	public Vector2 gridLocation;
 
     #region Pulse Methods
     void IGATPulseClient.OnPulse(IGATPulseInfo pulseInfo)
@@ -140,6 +171,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 		if (ValidAction(decision))
 		{
 			actionMade = true;
+			currNote = decision.note;
 			switch (decision.action)
 			{
 				case Actions.ATTACK:
@@ -227,6 +259,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         goalPos = new Vector2(mainTarget.position.x, transform.position.y);
         spawnPos = this.transform.position;
 
+		id = idCounter++;
         enemyList = team == 0 ? GameManager._RightUnits : GameManager._LeftUnits;
         enemyList.Add(mainTarget.gameObject);
 
@@ -277,14 +310,14 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         Vector2 moveDir = tar - new Vector2(transform.position.x, transform.position.y);
         moveDir.Normalize();
 		ConstFile.Direction dir = MathUtil.MoveDir(moveDir);
-		Vector2 temp = ConstFile.DirectionVectors[(int)dir] + gridLocation;
+		Vector2 temp = (ConstFile.DirectionVectors[(int)dir] * moveSpeed * NoteMult) + gridLocation;
 		if (!ArenaGrid.ValidGridPos(temp))
 		{
 			Rest();
 		}
 		gridLocation = temp;
         transform.position = ArenaGrid.GridToWorldPos(gridLocation);
-		TakeDamage(moveCost);
+		TakeDamage(moveCost * NoteMult);
 	}
 
     protected void Rest()
@@ -358,7 +391,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 		actionPattern[0] = strat;
 	}
     
-	public Actions CurrAction()
+	public PlayInstructs CurrInstruction()
 	{
 		switch (actionPattern[0])
 		{
@@ -372,6 +405,6 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 				NeutralStrat();
 				break;
 		}
-		return currAction;
+		return new PlayInstructs(currAction, currNote);
 	}
 }

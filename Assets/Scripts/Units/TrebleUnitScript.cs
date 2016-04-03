@@ -45,8 +45,8 @@ public class TrebleUnitScript : UnitScript
         atkDir *= .5f;
         Vector2 spawnPos = new Vector2(transform.position.x, transform.position.y) + atkDir;
         GameObject newBul = Instantiate(bullet, spawnPos, Quaternion.identity) as GameObject;
-        newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkCost);
-        TakeDamage(atkCost);
+        newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkCost * NoteMult);
+        TakeDamage(atkCost * NoteMult);
 		currAction = Actions.ATTACK;
 
 		

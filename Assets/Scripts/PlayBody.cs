@@ -6,7 +6,7 @@ public class PlayBody : MonoBehaviour {
 
 	public delegate void voidDel(UnitScript u);
 	public event voidDel UnitHit;
-	int team;
+	public int team;
 	
 
 	void Start()
