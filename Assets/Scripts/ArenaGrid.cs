@@ -15,14 +15,16 @@ public class ArenaGrid : MonoBehaviour
 	public Transform topPos;
 	public Transform bottomPos;
 	public Transform lines;
+	public List<GameObject> leftPlayHeads = new List<GameObject>();
+	public List<GameObject> rightPlayHeads = new List<GameObject>();
 	public List<GameObject> visibleLines = new List<GameObject>();
 	public float lX;
 	public float rX;
 	public float tY;
 	public float bY;
 	public float midX, midY;
-	private float arenaWidth;
-	private float arenaHeight;
+	public float arenaWidth;
+	public float arenaHeight;
 
 	private int currLines = 0;
 	
@@ -82,7 +84,16 @@ public class ArenaGrid : MonoBehaviour
 		{
 			DestroyImmediate(visibleLines[i]);
 		}
-
+		for (int i = 0; i < leftPlayHeads.Count; i++)
+		{
+			DestroyImmediate(leftPlayHeads[i]);
+		}
+		for (int i = 0; i < rightPlayHeads.Count; i++)
+		{
+			DestroyImmediate(rightPlayHeads[i]);
+		}
+		leftPlayHeads.Clear();
+		rightPlayHeads.Clear();
 		visibleLines.Clear();
 		UpdateValues();
 
@@ -127,6 +138,22 @@ public class ArenaGrid : MonoBehaviour
 			g.transform.localScale = new Vector3(g.transform.localScale.x, arenaHeight * 2, g.transform.localScale.z);
 			g.transform.SetParent(lines);
 			visibleLines.Add(g);
+		}
+
+
+		for (int i = 1; i < 5; i++)
+		{
+			GameObject g = Instantiate(playHead, new Vector3( lX +((arenaWidth/4) * i), tY), Quaternion.identity) as GameObject;
+			g.transform.SetParent(lines);
+			leftPlayHeads.Add(g);
+		}
+
+		for (int i = 1; i < 5; i++)
+		{
+			GameObject g = Instantiate(playHead, new Vector3(rX - ((arenaWidth / 4) * i), bY), Quaternion.identity) as GameObject;
+			g.GetComponent<SpriteRenderer>().flipY = false;
+			g.transform.SetParent(lines);
+			rightPlayHeads.Add(g);
 		}
 
 		for (int y = 0; y < vertNum; y++)

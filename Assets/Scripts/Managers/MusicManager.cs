@@ -10,6 +10,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
     public Transform left;
     public Transform right;
 
+
     public PulseModule pulse;
     public static PulseModule _Pulse;
 
@@ -96,7 +97,7 @@ public class MusicManager : MonoBehaviour, IGATPulseClient
 
 	void StartPulse()
 	{
-		_Pulse.SubscribeToPulse(this);
+		//_Pulse.SubscribeToPulse(this);
 		sampleBank.LoadFinished -= StartPulse;
 	}
 

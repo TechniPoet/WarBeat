@@ -233,7 +233,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         //Subscriptions
 		//if (MusicManager._Pulse != null)
         pulse = MusicManager._Pulse;
-        pulse.SubscribeToPulse(this);
+        //pulse.SubscribeToPulse(this);
         MusicManager.units.Add(this);
         GameManager.AddUnit += EnemyAdd;
         GameManager.RemoveUnit += EnemyRemove;
@@ -299,7 +299,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         {
             MusicManager.units.Remove((UnitScript)this);
             GameManager.RemoveDeadUnit(team, this.gameObject, currType);
-            pulse.UnsubscribeToPulse(this);
+            //pulse.UnsubscribeToPulse(this);
             Destroy(this.gameObject);
         }
     }
@@ -358,4 +358,20 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 		actionPattern[0] = strat;
 	}
     
+	public Actions CurrAction()
+	{
+		switch (actionPattern[0])
+		{
+			case Strategies.AGGRESSIVE:
+				AggressiveStrat();
+				break;
+			case Strategies.DEFENSIVE:
+				DefensiveStrat();
+				break;
+			case Strategies.NEUTRAL:
+				NeutralStrat();
+				break;
+		}
+		return currAction;
+	}
 }
