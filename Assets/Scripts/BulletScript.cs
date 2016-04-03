@@ -12,7 +12,7 @@ public class BulletScript : MonoBehaviour {
 
     public void Setup(float newSpeed, Vector2 newDir, int newTeam, float newEnergy)
     {
-        energy = newEnergy * 1.5f;
+        energy = newEnergy * 1.2f;
         speed = newSpeed;
         dir = newDir;
         teamNum = newTeam;
@@ -27,14 +27,14 @@ public class BulletScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         transform.position = new Vector2(transform.position.x, transform.position.y) + (dir * speed * Time.deltaTime);
-        energy -= energyPerUnit * Mathf.Abs((dir * speed * Time.deltaTime).magnitude);
+        energy -= energyPerUnit * (Mathf.Abs((dir * speed * Time.deltaTime).magnitude) * ArenaGrid.GridUnitSize() );
         if (energy <= 0)
         {
 			dead = true;
         }
 		else
 		{
-			transform.localScale = new Vector3(energy/20, energy/20, 1);
+			transform.localScale = new Vector3(energy/60, energy/60, 1);
 		}
 		
 	}

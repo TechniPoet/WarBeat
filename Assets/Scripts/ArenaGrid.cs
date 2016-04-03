@@ -74,9 +74,16 @@ public class ArenaGrid : MonoBehaviour
 		return grid[(int)gridPos.y, (int)gridPos.x];
 	}
 
-
-
-
+	public static float GridDistance(Vector2 s, Vector2 t)
+	{
+		float dist = Vector2.Distance(s,t);
+		return dist / GridUnitSize();
+	}
+	
+	public static float GridUnitSize()
+	{
+		return grid[0, 1].x - grid[0, 0].x;
+	}
 
 	public void GenerateGrid()
 	{

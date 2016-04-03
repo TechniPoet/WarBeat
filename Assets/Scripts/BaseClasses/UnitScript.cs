@@ -346,7 +346,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 			case CondOptions.ENEMY_DISTANCE:
 				if (enemyList.Count > 0)
 				{
-					firstVal = Vector2.Distance(this.transform.position, enemyList[0].transform.position);
+					firstVal = ArenaGrid.GridDistance(this.transform.position, enemyList[0].transform.position);
 				}
 				else
 				{
@@ -366,7 +366,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 			case CondOptions.ENEMY_DISTANCE:
 				if (enemyList.Count > 0)
 				{
-					secondVal = Vector2.Distance(this.transform.position, enemyList[0].transform.position);
+					secondVal = ArenaGrid.GridDistance(this.transform.position, enemyList[0].transform.position);
 				}
 				else
 				{
