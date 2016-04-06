@@ -17,6 +17,15 @@ public class BulletScript : MonoBehaviour {
         dir = newDir;
         teamNum = newTeam;
         this.gameObject.SetActive(true);
+		switch (teamNum)
+		{
+			case 0:
+				GetComponent<SpriteRenderer>().color = Color.blue;
+				break;
+			case 1:
+				GetComponent<SpriteRenderer>().color = Color.red;
+				break;
+		}
     }
 
 	// Use this for initialization
@@ -27,7 +36,7 @@ public class BulletScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         transform.position = new Vector2(transform.position.x, transform.position.y) + (dir * speed * Time.deltaTime);
-        energy -= energyPerUnit * (Mathf.Abs((dir * speed * Time.deltaTime).magnitude) * ArenaGrid.GridUnitSize() );
+        energy -= energyPerUnit * (Mathf.Abs((dir * speed * Time.deltaTime).magnitude) / ArenaGrid.GridUnitSize() );
         if (energy <= 0)
         {
 			dead = true;

@@ -347,6 +347,8 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 				if (enemyList.Count > 0)
 				{
 					firstVal = ArenaGrid.GridDistance(this.transform.position, enemyList[0].transform.position);
+					
+					
 				}
 				else
 				{
