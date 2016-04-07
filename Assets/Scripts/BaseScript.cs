@@ -10,6 +10,11 @@ public class BaseScript : Mortal
 		gainRate = newGainRate;
 	}
 
+
+	void Update()
+	{
+		MortalUpdate();
+	}
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		if (col.GetComponent<UnitScript>() != null)

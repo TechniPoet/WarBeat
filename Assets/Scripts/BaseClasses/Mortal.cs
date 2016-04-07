@@ -24,10 +24,6 @@ public class Mortal : MonoBehaviour {
         minX = energyBar.anchoredPosition.x - energyBar.rect.width;
     }
 	
-	// Update is called once per frame
-	void Update () {
-        
-	}
 
     protected void MortalUpdate()
     {

@@ -50,7 +50,11 @@ public class BulletScript : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        switch (col.gameObject.tag)
+		if (col.gameObject.GetComponent<Mortal>()==null) {
+			return;
+		}
+
+		switch (col.gameObject.tag)
         {
             case GameManager.UnitTag:
                 if (col.gameObject.GetComponent<Mortal>().team != teamNum)
