@@ -18,18 +18,18 @@ public class BassUnitScript : UnitScript
 		UnitSetup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
 		newMoveSpeed, newAtkSpeed, newAtkLifeSpan);
 		currType = UnitType.BASS;
+		AIManager.UnitAIs u;
 		if (team == 0)
 		{
-			neutralAI = AIManager.BassUnit.NeutralAI;
-			aggressiveAI = AIManager.BassUnit.AggressiveAI;
-			defensiveAI = AIManager.BassUnit.DefensiveAI;
+			u = AIManager.BassUnit;
 		}
 		else
 		{
-			neutralAI = AIManager.EnemyBassUnit.NeutralAI;
-			aggressiveAI = AIManager.EnemyBassUnit.AggressiveAI;
-			defensiveAI = AIManager.EnemyBassUnit.DefensiveAI;
+			u = AIManager.EnemyBassUnit;
 		}
+		neutralAI = u.NeutralAI;
+		aggressiveAI = u.AggressiveAI;
+		defensiveAI = u.DefensiveAI;
 	}
 
 

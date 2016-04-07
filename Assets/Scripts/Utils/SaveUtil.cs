@@ -46,6 +46,25 @@ public static class SaveUtil
 		}
 	}
 
+	public static List<T> LoadSafeList<T>(string key)
+	{
+
+		if (PlayerPrefs.HasKey(key))
+		{
+			List<T> retList = new List<T>();
+			string[] strings = PlayerPrefs.GetString(key).Split(new String[] { delimeter }, System.StringSplitOptions.None);
+			for (int i = 0; i < strings.Length; i++)
+			{
+				retList.Add(DeserializeFromString<T>(strings[i]));
+			}
+			return retList;
+		}
+		else
+		{
+			return new List<T>();
+		}
+	}
+
 	private static TData DeserializeFromString<TData>(string settings)
 	{
 		byte[] b = Convert.FromBase64String(settings);

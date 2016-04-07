@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GAudio;
 using System;
 
-public class StatueScript : Mortal, IGATPulseClient
+public class StatueScript : MonoBehaviour, IGATPulseClient
 {
     bool init = false;
     List<Vector3> movePoints;
@@ -11,10 +11,13 @@ public class StatueScript : Mortal, IGATPulseClient
     bool up = true;
     public Transform spawner;
 
+	public PulseModule pulse;
+
+
     #region Pulse Methods
     public void OnPulse(IGATPulseInfo pulseInfo)
     {
-        if (up)
+		if (up)
         {
             if (moveInd == movePoints.Count - 1)
             {
@@ -48,21 +51,19 @@ public class StatueScript : Mortal, IGATPulseClient
     #endregion
 
     bool pInit = false;
-    public void Setup(float newStartE, float newMaxE, float newGainRate)
+    public void Start()
     {
-        
-        energy = newStartE;
-        maxEnergy = newMaxE;
-        gainRate = newGainRate;
+		pulse.SubscribeToPulse(this);
+		
         init = true;
 
         movePoints = new List<Vector3>();
 
         int div = GameManager._BaseMoveOnMeasure ? 4 : GameManager._ArenaDiv;
         this.transform.localScale = new Vector3(this.transform.localScale.x, 7f/div, this.transform.localScale.z);
-        float arenaHeight = GameManager._Top.transform.position.y - GameManager._Bottom.transform.position.y;
-        float noteWindow = arenaHeight / div;
-        float baseY = GameManager._Bottom.transform.position.y + (noteWindow/2);
+       
+        float noteWindow = ArenaGrid.arenaHeight / div;
+        float baseY = ArenaGrid.bY;
 
         
         for (int i = 0; i < div; i++)
@@ -70,27 +71,12 @@ public class StatueScript : Mortal, IGATPulseClient
             movePoints.Add(new Vector3(transform.position.x, baseY, transform.position.z));
             baseY += noteWindow;
         }
-        if (MusicManager._PInit)
-        {
-            MusicManager._Pulse.SubscribeToPulse(this);
-            pInit = true;
-        }
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (init)
-        {
-            energy += gainRate * Time.deltaTime;
-            MortalUpdate();
-        }
-        if (!pInit && MusicManager._PInit)
-        {
-            MusicManager._Pulse.SubscribeToPulse(this);
-            pInit = true;
-        }
-    }
+	void OnDisable()
+	{
+		pulse.UnsubscribeToPulse(this);
+	}
 
 }

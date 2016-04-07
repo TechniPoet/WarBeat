@@ -36,7 +36,7 @@ public class BulletScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         transform.position = new Vector2(transform.position.x, transform.position.y) + (dir * speed * Time.deltaTime);
-        energy -= energyPerUnit * (Mathf.Abs((dir * speed * Time.deltaTime).magnitude) / ArenaGrid.GridUnitSize() );
+        //energy -= energyPerUnit * (Mathf.Abs((dir * speed * Time.deltaTime).magnitude) / ArenaGrid.GridUnitSize() );
         if (energy <= 0)
         {
 			dead = true;

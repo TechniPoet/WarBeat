@@ -57,17 +57,18 @@ public class SpawnMaster : MonoBehaviour {
 				spawnPoint = GM._LTeam.baseScript.spawner.position;
 				attackBase = rightBase;
 				hBase = leftBase;
+				//GM._LTeam.triggerScript.TakeDamage(GM._TUnit.spawnCost);
 				break;
 			case 1:
 				spawnPoint = GM._RTeam.baseScript.spawner.position;
 				attackBase = leftBase;
 				hBase = rightBase;
+				//GM._RTeam.triggerScript.TakeDamage(GM._TUnit.spawnCost);
 				break;
 			default:
 				return;
 		}
-
-		hBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
+		
 		GameObject newUnit = Instantiate(tUnit, spawnPoint, Quaternion.identity) as GameObject;
 
 		TrebleUnit u = GM._TUnit;
@@ -90,24 +91,24 @@ public class SpawnMaster : MonoBehaviour {
 		Vector2 spawnPoint;
 		GameObject attackBase;
 		GameObject hBase;
-
 		switch (team)
 		{
 			case 0:
 				spawnPoint = GM._LTeam.baseScript.spawner.position;
 				attackBase = rightBase;
 				hBase = leftBase;
+				//GM._LTeam.triggerScript.TakeDamage(GM._BUnit.spawnCost);
 				break;
 			case 1:
 				spawnPoint = GM._RTeam.baseScript.spawner.position;
 				attackBase = leftBase;
 				hBase = rightBase;
+				//GM._RTeam.triggerScript.TakeDamage(GM._BUnit.spawnCost);
 				break;
 			default:
 				return;
 		}
-
-		hBase.GetComponent<StatueScript>().energy -= GM._BUnit.spawnCost;
+		
 		GameObject newUnit = Instantiate(bUnit, spawnPoint, Quaternion.identity) as GameObject;
 
 		BassUnit u = GM._BUnit;

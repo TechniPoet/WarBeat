@@ -13,10 +13,9 @@ public class PlayBody : MonoBehaviour {
 	{
 		
 	}
-
+	
 	void OnTriggerEnter2D(Collider2D col)
 	{
-		Debug.Log("hit");
 		if (col.GetComponent<UnitScript>() != null)
 		{
 			if (col.GetComponent<UnitScript>().team == team)
@@ -27,6 +26,8 @@ public class PlayBody : MonoBehaviour {
 				}
 			}
 		}
-		
+
 	}
+	
 }
+

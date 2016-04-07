@@ -34,9 +34,9 @@ public static class AIManager
 
 		public UnitAIs(string aggrKey, string defKey, string neuKey)
 		{
-			AggressiveAI = SaveUtil.LoadList<ConditionalItem>(aggrKey);
-			DefensiveAI = SaveUtil.LoadList<ConditionalItem>(defKey);
-			NeutralAI = SaveUtil.LoadList<ConditionalItem>(neuKey);
+			AggressiveAI = SaveUtil.LoadSafeList<ConditionalItem>(aggrKey);
+			DefensiveAI = SaveUtil.LoadSafeList<ConditionalItem>(defKey);
+			NeutralAI = SaveUtil.LoadSafeList<ConditionalItem>(neuKey);
 		}
 	}
 

@@ -2,38 +2,51 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ArenaGrid : MonoBehaviour
+public class ArenaGrid : UnitySingleton<ArenaGrid>
 {
 	public GameObject linePrefab;
 	public GameObject playHead;
-
-	public static Vector2[,] grid;
-	public float topY, leftX;
-	public float lineDist;
 	public Transform leftPos;
 	public Transform rightPos;
 	public Transform topPos;
 	public Transform bottomPos;
 	public Transform lines;
+
+
+	public static Vector2[,] grid;
+	public static float topY, leftX;
+	public float lineDist;
+	
 	public List<GameObject> leftPlayHeads = new List<GameObject>();
 	public List<GameObject> rightPlayHeads = new List<GameObject>();
 	public List<GameObject> visibleLines = new List<GameObject>();
-	public float lX;
-	public float rX;
-	public float tY;
-	public float bY;
-	public float midX, midY;
-	public float arenaWidth;
-	public float arenaHeight;
+	public static float lX;
+	public static float rX;
+	public static float tY;
+	public static float bY;
+	public static float midX, midY;
+	public static float arenaWidth;
+	public static float arenaHeight;
 
 	private int currLines = 0;
 	
 
-	// Use this for initialization
-	void Start ()
+	/// <summary>
+	/// Returns the subsection the given position is in.
+	/// </summary>
+	public static int FindSubsection(int sections, float y)
 	{
-		GenerateGrid();
+		for (int i = 0; i < sections; i++)
+		{
+			if (y < ((arenaHeight / sections) * (i + 1)) + bY)
+			{
+				return i;
+			}
+		}
+		throw new System.Exception(string.Format("Unable to find subsection for given position\n"
+			+ "Arena lowY: {0}\nArena highY: {1}\nSearch Y: {2}", bY, tY, y));
 	}
+
 
 	public static Vector2 ClosestGridPoint(Vector2 target)
 	{
@@ -70,7 +83,6 @@ public class ArenaGrid : MonoBehaviour
 
 	public static Vector2 GridToWorldPos(Vector2 gridPos)
 	{
-
 		return grid[(int)gridPos.y, (int)gridPos.x];
 	}
 

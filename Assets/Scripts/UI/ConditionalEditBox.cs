@@ -21,7 +21,7 @@ public class ConditionalEditBox : MonoBehaviour {
 			actionDropdown.options.Add(opt);
 		}
 		noteDropdown.ClearOptions();
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			Dropdown.OptionData opt = new Dropdown.OptionData(((ConstFile.Notes)i).ToString());
 			noteDropdown.options.Add(opt);

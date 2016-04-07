@@ -57,14 +57,15 @@ public static class ConstFile
 
 	public enum Notes : int
 	{
-		HALF = 0,
-		QUARTER = 1,
-		EIGHTH = 2,
-		SIXTEENTH = 3,
-		DOTTED_QUARTER = 4,
-		DOTTED_EIGTH = 5,
-		DOTTED_SIXTEENTH = 6,
+		WHOLE = 0,
+		HALF = 1,
+		QUARTER = 2,
+		EIGHTH = 3,
+		SIXTEENTH = 4,
+		DOTTED_QUARTER = 5,
+		DOTTED_EIGTH = 6,
+		DOTTED_SIXTEENTH = 7,
 	}
 	// Based on data from http://bradthemad.org/guitar/tempo_explanation.php 
-	public static float[] NoteBPMCalcs = new float[] { 120, 60, 30, 15, 90, 45, 22.5f};
+	public static float[] NoteBPMCalcs = new float[] { 240, 120, 60, 30, 15, 90, 45, 22.5f};
 }

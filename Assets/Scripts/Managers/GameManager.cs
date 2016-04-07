@@ -9,6 +9,7 @@ public class TeamBase
     public GameObject baseObject;
     [System.NonSerialized]
     public StatueScript baseScript;
+	public BaseScript triggerScript;
     public float baseMaxEnergy;
     public float baseStartEnergy;
     public float energyGainPerSecond;
@@ -106,6 +107,7 @@ public class GameManager : MonoBehaviour
 	// Use this for initialization
 	void Awake ()
     {
+		ArenaGrid.Instance.GenerateGrid();
         _LeftUnits = new List<GameObject>();
 		_LeftBass = new List<GameObject>();
 		_LeftTreble = new List<GameObject>();
@@ -114,13 +116,13 @@ public class GameManager : MonoBehaviour
 		_RightTreble = new List<GameObject>();
 		UpdateStatics();
         _Init = true;
-        leftTeam.baseScript.Setup(leftTeam.baseStartEnergy, leftTeam.baseMaxEnergy, leftTeam.energyGainPerSecond);
-        rightTeam.baseScript.Setup(rightTeam.baseStartEnergy, rightTeam.baseMaxEnergy, rightTeam.energyGainPerSecond);
+        leftTeam.triggerScript.Setup(leftTeam.baseStartEnergy, leftTeam.baseMaxEnergy, leftTeam.energyGainPerSecond);
+        rightTeam.triggerScript.Setup(rightTeam.baseStartEnergy, rightTeam.baseMaxEnergy, rightTeam.energyGainPerSecond);
     }
 
     void UpdateStatics()
     {
-        _TUnit = tUnit;
+		_TUnit = tUnit;
 		_BUnit = bUnit;
         leftTeam.baseScript = leftTeam.baseObject.GetComponent<StatueScript>();
         rightTeam.baseScript = rightTeam.baseObject.GetComponent<StatueScript>();
@@ -138,13 +140,14 @@ public class GameManager : MonoBehaviour
 
     // Update is called once per frame
     void Update () {
-        
-        if (leftTeam.baseScript.energy <= 0 || rightTeam.baseScript.energy <= 0)
+		
+		if (leftTeam.triggerScript.energy <= 0 || rightTeam.triggerScript.energy <= 0)
         {
             SceneManager.LoadScene("AISetup");
         }
-		bassButton.interactable = (leftTeam.baseScript.energy - _BUnit.spawnCost) > 0;
-		trebleButton.interactable = (leftTeam.baseScript.energy - _TUnit.spawnCost) > 0;
+		bassButton.interactable = (leftTeam.triggerScript.energy - _BUnit.spawnCost) > 0;
+		trebleButton.interactable = (leftTeam.triggerScript.energy - _TUnit.spawnCost) > 0;
+		
 	}
 
     
@@ -152,7 +155,7 @@ public class GameManager : MonoBehaviour
     // Adds new unit to proper list and sends event to all listeners.
     public static void AddNewUnit(int team, ref GameObject unit, UnitScript.UnitType type)
     {
-        switch(team)
+		switch (team)
         {
             case 0:
                 _LeftUnits.Add(unit);
@@ -184,7 +187,7 @@ public class GameManager : MonoBehaviour
 
     public static void RemoveDeadUnit(int team, GameObject unit, UnitScript.UnitType type)
     {
-        switch (team)
+		switch (team)
         {
             case 0:
                 _LeftUnits.Remove(unit);

@@ -5,6 +5,7 @@ public class BasicAIController : MonoBehaviour {
 
 	public SpawnMaster sp;
 	public StatueScript homeBase;
+	public BaseScript bs;
 	[Range(0,1)]
 	public float lowEnergy;
 	[Range(0, 1)]
@@ -36,7 +37,7 @@ public class BasicAIController : MonoBehaviour {
 			energyPercent = randEnergyThresh ? Random.Range(lowEnergy, highEnergy) : lowEnergy;
 			
 			
-			if (homeBase.energy < (energyPercent * homeBase.MaxEnergy))
+			if (bs.energy < (energyPercent * bs.MaxEnergy))
 			{
 				yield return new WaitForSeconds(waitForRegenTime);
 			}
@@ -54,6 +55,7 @@ public class BasicAIController : MonoBehaviour {
 				float waitTime = randIntervals ? Random.Range(minSpawnTime, spawnCoolTime) : spawnCoolTime;
 				yield return new WaitForSeconds(waitTime);
 			}
+			
 		}
 	}
 }

@@ -23,18 +23,18 @@ public class TrebleUnitScript : UnitScript
         newMoveSpeed, newAtkSpeed, newAtkLifeSpan);
 		currType = UnitType.TREBLE;
 
+		AIManager.UnitAIs u;
 		if (team == 0)
 		{
-			neutralAI = AIManager.TrebleUnit.NeutralAI;
-			aggressiveAI = AIManager.TrebleUnit.AggressiveAI;
-			defensiveAI = AIManager.TrebleUnit.DefensiveAI;
+			u = AIManager.TrebleUnit;
 		}
 		else
 		{
-			neutralAI = AIManager.EnemyTrebleUnit.NeutralAI;
-			aggressiveAI = AIManager.EnemyTrebleUnit.AggressiveAI;
-			defensiveAI = AIManager.EnemyTrebleUnit.DefensiveAI;
+			u = AIManager.EnemyTrebleUnit;
 		}
+		neutralAI = u.NeutralAI;
+		aggressiveAI = u.AggressiveAI;
+		defensiveAI = u.DefensiveAI;
 	}
 
     

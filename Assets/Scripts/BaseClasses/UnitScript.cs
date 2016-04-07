@@ -10,10 +10,19 @@ public class PlayInstructs
 {
 	public Actions action;
 	public ConstFile.Notes note;
-	public PlayInstructs(Actions newAct, ConstFile.Notes newNote)
+	public float y;
+	UnitScript unit;
+	public PlayInstructs(Actions newAct, ConstFile.Notes newNote, float yPos, UnitScript u)
 	{
 		action = newAct;
 		note = newNote;
+		y = yPos;
+		unit = u;
+	}
+
+	public void MakeMove()
+	{
+		unit.MakeMove(this);
 	}
 }
 
@@ -54,19 +63,23 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 		{
 			switch(currNote)
 			{
-				case ConstFile.Notes.EIGHTH:
+				case ConstFile.Notes.SIXTEENTH:
 					return 1;
-				case ConstFile.Notes.QUARTER:
+				case ConstFile.Notes.EIGHTH:
 					return 2;
+				case ConstFile.Notes.QUARTER:
+					return 4;
 				case ConstFile.Notes.HALF:
-					return 3;
+					return 8;
+				case ConstFile.Notes.WHOLE:
+					return 16;
+				
 				default:
 					return 1;
 			}
 		}
 	}
     // pulse variables
-    protected PulseModule pulse;
     protected int curr_beat = 0;
     //Move Variables
     protected float moveCost;
@@ -172,32 +185,39 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 		{
 			actionMade = true;
 			currNote = decision.note;
-			switch (decision.action)
-			{
-				case Actions.ATTACK:
-					currTarget = enemyList[0].transform.position;
-					Attack();
-					break;
-				case Actions.MOVE_BACK:
-					Vector3 backTarget = this.transform.position + backMovementMod;
-					currAction = Actions.MOVE_BACK;
-					MoveTowards(backTarget);
-					break;
-				case Actions.MOVE_FORWARD:
-					Vector3 forTarget = this.transform.position + -backMovementMod;
-					currAction = Actions.MOVE_FORWARD;
-					MoveTowards(forTarget);
-					break;
-				case Actions.MOVE_ENEMY:
-					currAction = Actions.MOVE_ENEMY;
-					MoveTowards(enemyList[0].transform.position);
-					break;
-				case Actions.REST:
-					Rest();
-					break;
-			}
+			currAction = decision.action;
 		}
 		return actionMade;
+	}
+
+
+	public void MakeMove(PlayInstructs instruct)
+	{
+		currNote = instruct.note;
+		switch (instruct.action)
+		{
+			case Actions.ATTACK:
+				currTarget = enemyList[0].transform.position;
+				Attack();
+				break;
+			case Actions.MOVE_BACK:
+				Vector3 backTarget = this.transform.position + backMovementMod;
+				currAction = Actions.MOVE_BACK;
+				MoveTowards(backTarget);
+				break;
+			case Actions.MOVE_FORWARD:
+				Vector3 forTarget = this.transform.position + -backMovementMod;
+				currAction = Actions.MOVE_FORWARD;
+				MoveTowards(forTarget);
+				break;
+			case Actions.MOVE_ENEMY:
+				currAction = Actions.MOVE_ENEMY;
+				MoveTowards(enemyList[0].transform.position);
+				break;
+			case Actions.REST:
+				Rest();
+				break;
+		}
 	}
 
 	protected void AggressiveStrat()
@@ -262,11 +282,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 		id = idCounter++;
         enemyList = team == 0 ? GameManager._RightUnits : GameManager._LeftUnits;
         enemyList.Add(mainTarget.gameObject);
-
-        //Subscriptions
-		//if (MusicManager._Pulse != null)
-        pulse = MusicManager._Pulse;
-        //pulse.SubscribeToPulse(this);
+		
         MusicManager.units.Add(this);
         GameManager.AddUnit += EnemyAdd;
         GameManager.RemoveUnit += EnemyRemove;
@@ -283,8 +299,7 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 				break;
             case 1:
 				GetComponentInChildren<SpriteRenderer>().color = Color.red;
-				actionPattern = new Strategies[8] {Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.DEFENSIVE, Strategies.DEFENSIVE,
-				Strategies.AGGRESSIVE, Strategies.NEUTRAL,Strategies.AGGRESSIVE, Strategies.DEFENSIVE};
+				actionPattern = new Strategies[] {Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE};
 
 				backMovementMod = new Vector3(100, 0, 0);
 				
@@ -316,8 +331,9 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 			Rest();
 		}
 		gridLocation = temp;
-        transform.position = ArenaGrid.GridToWorldPos(gridLocation);
+		transform.position = ArenaGrid.GridToWorldPos(gridLocation);
 		TakeDamage(moveCost * NoteMult);
+        
 	}
 
     protected void Rest()
@@ -347,8 +363,6 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 				if (enemyList.Count > 0)
 				{
 					firstVal = ArenaGrid.GridDistance(this.transform.position, enemyList[0].transform.position);
-					
-					
 				}
 				else
 				{
@@ -407,6 +421,6 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 				NeutralStrat();
 				break;
 		}
-		return new PlayInstructs(currAction, currNote);
+		return new PlayInstructs(currAction, currNote, transform.position.y, this);
 	}
 }
