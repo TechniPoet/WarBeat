@@ -1,18 +1,25 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class BulletScript : MonoBehaviour {
 
     float speed;
     Vector2 dir;
     int teamNum;
-	float energyPerUnit = 5;
+	//float energyPerUnit = 5;
     public float energy = 34;
 	public bool dead = false;
+	static int cnt = 0;
+	public int id;
+	public List<int> idSeen;
 
     public void Setup(float newSpeed, Vector2 newDir, int newTeam, float newEnergy)
     {
-        energy = newEnergy * 1.2f;
+		cnt++;
+		id = cnt;
+		idSeen = new List<int>();
+
+		energy = newEnergy * 1.2f;
         speed = newSpeed;
         dir = newDir;
         teamNum = newTeam;
@@ -43,7 +50,7 @@ public class BulletScript : MonoBehaviour {
         }
 		else
 		{
-			transform.localScale = new Vector3(energy/60, energy/60, 1);
+			transform.localScale = new Vector3(energy/30, energy/30, 1);
 		}
 		
 	}
@@ -76,14 +83,17 @@ public class BulletScript : MonoBehaviour {
                 break;
             case "Bad":
 				BulletScript bul = col.gameObject.GetComponent<BulletScript>();
-
-				if (bul.teamNum != teamNum)
-                {
-					float oldDmg = bul.GetDamage();
-					bul.TakeDamage(energy);
-					this.TakeDamage(oldDmg);
-					
+				if (!idSeen.Contains(bul.id))
+				{
+					if (bul.teamNum != teamNum)
+					{
+						float oldDmg = bul.GetDamage();
+						bul.TakeDamage(energy);
+						this.TakeDamage(oldDmg);
+					}
+					bul.idSeen.Add(id);
 				}
+				
 				Physics2D.IgnoreCollision(GetComponent<Collider2D>(), col.collider);
 				break;
             default:

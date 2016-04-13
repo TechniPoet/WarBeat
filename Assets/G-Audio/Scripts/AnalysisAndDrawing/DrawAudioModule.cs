@@ -58,7 +58,7 @@ namespace GAudio
 		{
 			base.Start ();
 			_lineRenderer = gameObject.AddComponent<LineRenderer>() as LineRenderer;
-			_lineRenderer.castShadows = false;
+			_lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 			_lineRenderer.receiveShadows = false;
 			SetVertexCount();
 			_lineRenderer.SetColors( startColor, endColor );

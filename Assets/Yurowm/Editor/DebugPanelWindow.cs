@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class DebugPanelWindow : EditorWindow {
 
 	// Parameters
-	float viewportScale = 800;
+	//float viewportScale = 800;
 	bool viewportSettings = false;
 	bool ignoreDeflog = false;
 
@@ -34,7 +34,7 @@ public class DebugPanelWindow : EditorWindow {
 
 	// Info for stack trace panel
 	string info = "";
-	Rect oscRect = new Rect();
+	//Rect oscRect = new Rect();
 
 	// Styles
 	GUIStyle infoAreaStyle;
@@ -46,7 +46,7 @@ public class DebugPanelWindow : EditorWindow {
 	// Temp
 	GUIContent content = new GUIContent();
 	float width;
-	float cursor = 0;
+	//float cursor = 0;
 
 	// OnCreate
 	DebugPanelWindow () {

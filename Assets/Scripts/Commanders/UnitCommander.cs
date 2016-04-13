@@ -10,7 +10,7 @@ public class UnitCommander : MonoBehaviour
 	UnitScript.Strategies[] actionPatternZeroTreble = new UnitScript.Strategies[1];
 	UnitScript.Strategies[] actionPatternOneBass = new UnitScript.Strategies[1] { UnitScript.Strategies.AGGRESSIVE };
 	UnitScript.Strategies[] actionPatternOneTreble = new UnitScript.Strategies[1] { UnitScript.Strategies.AGGRESSIVE};
-	bool init = false;
+	//bool init = false;
 
     // Use this for initialization
     void Awake()
@@ -91,13 +91,21 @@ public class UnitCommander : MonoBehaviour
 			case 0:
 				for (int i = 0; i < GameManager._LeftBass.Count; i++)
 				{
-					GameManager._LeftBass[i].GetComponent<UnitScript>().UpdateActionPattern(actionPatternZeroBass[0]);
+					if (GameManager._LeftBass[i] != null)
+					{
+						GameManager._LeftBass[i].GetComponent<UnitScript>().UpdateActionPattern(actionPatternZeroBass[0]);
+					}
+					
 				}
 				break;
 			case 1:
 				for (int i = 0; i < GameManager._RightBass.Count; i++)
 				{
-					GameManager._RightBass[i].GetComponent<UnitScript>().UpdateActionPattern(actionPatternOneBass[0]);
+					if (GameManager._RightBass[i] != null)
+					{
+						GameManager._RightBass[i].GetComponent<UnitScript>().UpdateActionPattern(actionPatternOneBass[0]);
+					}
+					
 				}
 				break;
 		}

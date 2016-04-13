@@ -91,9 +91,9 @@ public class MusicManager : MonoBehaviour
 
 
 
-    int curr_beat = 0;
-    bool init = false;
-	bool pulseNow = false;
+    //int curr_beat = 0;
+    //bool init = false;
+	//bool pulseNow = false;
 
     void Awake()
     {
@@ -117,15 +117,25 @@ public class MusicManager : MonoBehaviour
 
 	void Play(List<PlayInstructs> instructs, ConstFile.Notes note)
 	{
+		IGATProcessedSample sample;
+		string[] noteArr;
 		while (GATManager.DefaultPlayer.NbOfTracks < 20)
 		{
 			GATManager.DefaultPlayer.AddTrack<GATTrack>();
+			noteArr = chords[chordIndex];
+			sample = sampleBank.GetProcessedSample(string.Format(noteArr[0], 3), wholeEnv);
+			sample.Play(0);
+			sample = sampleBank.GetProcessedSample(string.Format(noteArr[1], 3), wholeEnv);
+			sample.Play(0);
+			sample = sampleBank.GetProcessedSample(string.Format(noteArr[2], 3), wholeEnv);
+			sample.Play(0);
 		}
-		
+		noteArr = chords[chordIndex];
 		if (note == ConstFile.Notes.WHOLE)
 		{
 			chordIndex++;
 			chordIndex = chordIndex % chords.Count;
+
 		}
 
 		if (instructs.Count == 0)
@@ -153,20 +163,21 @@ public class MusicManager : MonoBehaviour
 			default:
 				throw new System.Exception(string.Format("Invalid note: {0}", instructs[0].note));
 		}
-		IGATProcessedSample sample;
-
-		string[] noteArr = chords[chordIndex];
+		
 
 		for (int i = 0; i < instructs.Count; i++)
 		{
-			if (instructs[i].action != ConstFile.Actions.REST)
+			if (instructs[i].Alive())
 			{
-				int noteInd = ArenaGrid.FindSubsection(noteArr.Length, instructs[i].y);
-				sample = sampleBank.GetProcessedSample(string.Format(noteArr[noteInd], 3), env);
-				sample.Play(0);
-				Debug.Log("Played " + instructs[i].note);
+				instructs[i].MakeMove();
+				if (instructs[i].action != ConstFile.Actions.REST)
+				{
+					int noteInd = ArenaGrid.FindSubsection(noteArr.Length, instructs[i].y);
+					sample = sampleBank.GetProcessedSample(string.Format(noteArr[noteInd], 3), env);
+					sample.Play(0);
+					//Debug.Log("Played " + instructs[i].note);
+				}
 			}
-			instructs[i].MakeMove();
 		}
 	}
 
@@ -381,7 +392,6 @@ public class MusicManager : MonoBehaviour
 			Debug.DrawLine(new Vector3(-1000, midzoneArr[i].low, 0),
 				new Vector3(1000, midzoneArr[i].low, 0), Color.black, 9999, false);
 		}
-		init = true;
 	}
 
 	struct MidnoteZone

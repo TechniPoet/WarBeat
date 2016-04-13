@@ -50,19 +50,16 @@ public class SpawnMaster : MonoBehaviour {
 	{
 		Vector2 spawnPoint;
 		GameObject attackBase;
-		GameObject hBase;
 		switch (team)
 		{
 			case 0:
 				spawnPoint = GM._LTeam.baseScript.spawner.position;
 				attackBase = rightBase;
-				hBase = leftBase;
 				GM._LTeam.triggerScript.TakeDamage(GM._TUnit.spawnCost);
 				break;
 			case 1:
 				spawnPoint = GM._RTeam.baseScript.spawner.position;
 				attackBase = leftBase;
-				hBase = rightBase;
 				GM._RTeam.triggerScript.TakeDamage(GM._TUnit.spawnCost);
 				break;
 			default:
@@ -90,19 +87,16 @@ public class SpawnMaster : MonoBehaviour {
 	{
 		Vector2 spawnPoint;
 		GameObject attackBase;
-		GameObject hBase;
 		switch (team)
 		{
 			case 0:
 				spawnPoint = GM._LTeam.baseScript.spawner.position;
 				attackBase = rightBase;
-				hBase = leftBase;
 				GM._LTeam.triggerScript.TakeDamage(GM._BUnit.spawnCost);
 				break;
 			case 1:
 				spawnPoint = GM._RTeam.baseScript.spawner.position;
 				attackBase = leftBase;
-				hBase = rightBase;
 				GM._RTeam.triggerScript.TakeDamage(GM._BUnit.spawnCost);
 				break;
 			default:

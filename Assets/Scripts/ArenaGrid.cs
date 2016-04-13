@@ -28,7 +28,7 @@ public class ArenaGrid : UnitySingleton<ArenaGrid>
 	public static float arenaWidth;
 	public static float arenaHeight;
 
-	private int currLines = 0;
+	//private int currLines = 0;
 	
 
 	/// <summary>
@@ -66,7 +66,7 @@ public class ArenaGrid : UnitySingleton<ArenaGrid>
 		return pointLocation;
 	}
 
-	public static bool ValidGridPos(Vector2 gridPos)
+	public static bool ValidGridPos(Vector2 gridPos, int id)
 	{
 		bool retVal = gridPos.x < 0 || gridPos.x >= grid.GetLength(1) || gridPos.y < 0 || gridPos.y >= grid.GetLength(0);
 		if (!retVal)
@@ -76,6 +76,7 @@ public class ArenaGrid : UnitySingleton<ArenaGrid>
 			Ray ray = new Ray(origin, new Vector3(0, 0, -1));
 			RaycastHit hit;
 			return !Physics.Raycast(ray, out hit, -17f);
+			
 		}
 		return !retVal;
 	}

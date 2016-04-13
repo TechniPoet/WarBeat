@@ -5,7 +5,7 @@ using System;
 
 public class StatueScript : MonoBehaviour, IGATPulseClient
 {
-    bool init = false;
+    //bool init = false;
     List<Vector3> movePoints;
     int moveInd = 0;
     bool up = true;
@@ -50,12 +50,12 @@ public class StatueScript : MonoBehaviour, IGATPulseClient
     }
     #endregion
 
-    bool pInit = false;
+    //bool pInit = false;
     public void Start()
     {
 		pulse.SubscribeToPulse(this);
 		
-        init = true;
+        //init = true;
 
         movePoints = new List<Vector3>();
 

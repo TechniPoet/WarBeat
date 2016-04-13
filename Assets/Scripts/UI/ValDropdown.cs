@@ -8,7 +8,6 @@ using System;
 public class ValDropdown : MonoBehaviour
 {
 	public delegate void valDropDownDel(int arg);
-	public event valDropDownDel dropDownChangeEvent;
 	public Dropdown varCheck;
 	public SpinnerFloat spin;
 	public GameObject spinObj;

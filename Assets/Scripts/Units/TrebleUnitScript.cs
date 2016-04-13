@@ -48,7 +48,5 @@ public class TrebleUnitScript : UnitScript
         newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkCost * NoteMult);
         TakeDamage(atkCost * NoteMult);
 		currAction = Actions.ATTACK;
-
-		
 	}
 }

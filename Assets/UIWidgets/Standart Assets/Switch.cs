@@ -229,11 +229,9 @@ namespace UIWidgets {
 				case SwitchDirection.LeftToRight:
 				case SwitchDirection.BottomToTop:
 					return (state) ? 1f : 0f;
-					break;
 				case SwitchDirection.RightToLeft:
 				case SwitchDirection.TopToBottom:
 					return (state) ? 0f : 1f;
-					break;
 			}
 			return 0f;
 		}

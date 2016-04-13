@@ -34,9 +34,9 @@ public class DebugPanel : MonoBehaviour {
 	[HideInInspector]
 	public bool ignoreDefLogByDefault = false;
 
-	GUIContent content = new GUIContent();
+	//GUIContent content = new GUIContent();
 
-	bool isShow = false;
+	//bool isShow = false;
 
 	// FPS
 	float fpsUpdateDelay = 0.2f;
@@ -49,7 +49,7 @@ public class DebugPanel : MonoBehaviour {
 	Color defaultColor;
 
 	void Awake () {
-		Application.RegisterLogCallback(HandleLog);
+		//Application.RegisterLogCallback(HandleLog);
 		transform.SetSiblingIndex (0);
 		IngorDefLog(ignoreDefLogByDefault);
 		if (visible && !(hideInEditMode && Application.isEditor)) gameObject.AddComponent<DebugPanelViewport> ();
@@ -122,10 +122,10 @@ public class DebugPanel : MonoBehaviour {
 	}
 
 	void OnEnable() {
-		Application.RegisterLogCallback(HandleLog);
+		Application.logMessageReceived += HandleLog;
 	}
 	void OnDisable() {
-		Application.RegisterLogCallback(null);
+		Application.logMessageReceived -= HandleLog;
 	}
 
 	void HandleLog(string logString, string stackTrace, LogType type) {

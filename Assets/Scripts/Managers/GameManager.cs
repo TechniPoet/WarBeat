@@ -182,7 +182,10 @@ public class GameManager : MonoBehaviour
 				}
 				break;
         }
-        AddUnit(team, ref unit, type);
+		if (AddUnit != null)
+		{
+			AddUnit(team, ref unit, type);
+		}
     }
 
     public static void RemoveDeadUnit(int team, GameObject unit, UnitScript.UnitType type)
@@ -214,6 +217,9 @@ public class GameManager : MonoBehaviour
 				}
 				break;
         }
-        RemoveUnit(team, ref unit, type);
+		if (RemoveUnit != null)
+		{
+			RemoveUnit(team, ref unit, type);
+		}
     }
 }

@@ -6,10 +6,10 @@ using System;
 
 public class PlayHead : MonoBehaviour, IGATPulseClient
 {
-	int index = 0;
+	//int index = 0;
 	public ArenaGrid grid;
 	public MusicManager mm;
-	GATActiveSampleBank sampleBank;
+	//GATActiveSampleBank sampleBank;
 	public PlayBody body;
 	public int team;
 	public NoteManager eigthManager;
@@ -34,7 +34,7 @@ public class PlayHead : MonoBehaviour, IGATPulseClient
 	{
 		body.team = team;
 		body.UnitHit += PlayUnit;
-		sampleBank = mm.sampleBank;
+		//sampleBank = mm.sampleBank;
 		switch (team)
 		{
 			case 0:
@@ -60,7 +60,7 @@ public class PlayHead : MonoBehaviour, IGATPulseClient
 			return;
 		}
 		unitCache.Add(u.id);
-		float y = u.transform.position.y;
+		//float y = u.transform.position.y;
 		//string[] noteArray;
 		PlayInstructs instruct = u.CurrInstruction();
 
