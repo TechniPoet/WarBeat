@@ -67,16 +67,19 @@ public class PlayHead : MonoBehaviour, IGATPulseClient
 		switch (instruct.note)
 		{
 			case ConstFile.Notes.HALF:
-				Debug.Log("added half");
+				//Debug.Log("added half");
 				mm.halfManager.AddInstruct(instruct);
 				break;
 			case ConstFile.Notes.QUARTER:
-				Debug.Log("added quarter");
+				//Debug.Log("added quarter");
 				mm.quarterManager.AddInstruct(instruct);
 				break;
 			case ConstFile.Notes.EIGHTH:
-				Debug.Log("added eigth");
+				//Debug.Log("added eigth");
 				mm.eigthManager.AddInstruct(instruct);
+				break;
+			case ConstFile.Notes.SIXTEENTH:
+				mm.sixteenthManager.AddInstruct(instruct);
 				break;
 		}
 	}
