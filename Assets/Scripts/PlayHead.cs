@@ -53,7 +53,7 @@ public class PlayHead : MonoBehaviour, IGATPulseClient
 		GetComponent<Rigidbody2D>().velocity = new Vector2(ArenaGrid.arenaWidth / trip, 0);
 	}
 
-	void PlayUnit(UnitScript u)
+	void PlayUnit(Puppet u)
 	{
 		if (unitCache.Contains(u.id))
 		{

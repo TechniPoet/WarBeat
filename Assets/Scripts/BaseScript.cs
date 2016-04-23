@@ -11,9 +11,9 @@ public class BaseScript : Mortal
 	}
 
 
-	void Update()
+	protected override void Update()
 	{
-		MortalUpdate();
+		base.Update();
 	}
 	void OnTriggerEnter2D(Collider2D col)
 	{

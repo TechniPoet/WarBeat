@@ -4,6 +4,12 @@ using System.Collections;
 [System.Serializable]
 public static class ConstFile
 {
+	public enum PuppetType
+	{
+		BASS,
+		TREBLE,
+		TOWER,
+	}
 
 	public enum Direction : int
 	{

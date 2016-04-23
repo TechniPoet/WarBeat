@@ -51,7 +51,6 @@ public class BasicAIController : MonoBehaviour {
 				{
 					sp.SpawnBass(1);
 				}
-				
 				float waitTime = randIntervals ? Random.Range(minSpawnTime, spawnCoolTime) : spawnCoolTime;
 				yield return new WaitForSeconds(waitTime);
 			}

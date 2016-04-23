@@ -2,20 +2,21 @@
 using UnityEngine.UI;
 using System.Collections;
 using UIWidgets;
+using PuppetType = ConstFile.PuppetType;
 
 public class BeatSwitches : MonoBehaviour {
 
     public int team = 0;
     public int beat;
 	[SerializeField]
-	public UnitScript.UnitType type;
+	public PuppetType type;
     public Image beatImage;
     public Switch neutralSwitch;
     public Switch defensiveSwitch;
     public Switch aggressiveSwitch;
     float waitTime = .6f;
 
-    public delegate void switchedEvent(int team, int beat, UnitScript.Strategies action, UnitScript.UnitType type);
+    public delegate void switchedEvent(int team, int beat, UnitScript.Strategies action, PuppetType type);
     public event switchedEvent SwitchChanged;
 
     [System.NonSerialized]

@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Actions = ConstFile.Actions;
+using PuppetType = ConstFile.PuppetType;
 
+[SelectionBase]
 public class BassUnitScript : UnitScript
 {
-
 	public GameObject bullet;
 	
 	float aggrAtkDist;
@@ -15,9 +16,9 @@ public class BassUnitScript : UnitScript
 		float newStartE, float newGainRate, float newMoveCost, float newAtkCost,
 		float newMoveSpeed, float newAtkSpeed, float newAtkLifeSpan)
 	{
-		UnitSetup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
+		Setup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
 		newMoveSpeed, newAtkSpeed, newAtkLifeSpan);
-		currType = UnitType.BASS;
+		currType = PuppetType.BASS;
 		AIManager.UnitAIs u;
 		if (team == 0)
 		{
@@ -45,9 +46,9 @@ public class BassUnitScript : UnitScript
 		TakeDamage(atkCost * NoteMult);
 		currAction = Actions.ATTACK;
 	}
-	
+
 	// Update is called once per frame
-	public new void Update () {
+	protected override void Update () {
 		base.Update();
 		DebugExtension.DebugCircle(transform.position, Vector3.forward, GameManager._BUnit.aggrAtkDist);
 	}

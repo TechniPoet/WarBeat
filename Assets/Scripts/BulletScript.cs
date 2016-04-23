@@ -57,7 +57,7 @@ public class BulletScript : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D col)
     {
-		if (col.gameObject.GetComponent<Mortal>()==null) {
+		if (col.gameObject.GetComponent<Mortal>()==null && col.gameObject.GetComponent<BulletScript>() == null) {
 			return;
 		}
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GAudio;
 using System;
+using PuppetType = ConstFile.PuppetType;
 
 public class UnitCommander : MonoBehaviour
 {
@@ -45,7 +46,7 @@ public class UnitCommander : MonoBehaviour
 		//UpdateTrebleUnits(1);
 	}
 
-	void ActionChange(int team, int beatNum, UnitScript.Strategies newAction, UnitScript.UnitType type)
+	void ActionChange(int team, int beatNum, UnitScript.Strategies newAction, PuppetType type)
 	{
 		//Debug.Log(string.Format("Action Change\nTeam: {0}\nBeatNum: {1}\nAction: {2}",team,beatNum,newAction));
 		switch (team)
@@ -53,10 +54,10 @@ public class UnitCommander : MonoBehaviour
 			case 0:
 				switch (type)
 				{
-					case UnitScript.UnitType.BASS:
+					case PuppetType.BASS:
 						actionPatternZeroBass[0] = newAction;
 						break;
-					case UnitScript.UnitType.TREBLE:
+					case PuppetType.TREBLE:
 						actionPatternZeroTreble[0] = newAction;
 						break;
 				}
@@ -64,10 +65,10 @@ public class UnitCommander : MonoBehaviour
 			case 1:
 				switch (type)
 				{
-					case UnitScript.UnitType.BASS:
+					case PuppetType.BASS:
 						actionPatternOneBass[0] = newAction;
 						break;
-					case UnitScript.UnitType.TREBLE:
+					case PuppetType.TREBLE:
 						actionPatternOneTreble[0] = newAction;
 						break;
 				}
@@ -75,10 +76,10 @@ public class UnitCommander : MonoBehaviour
 		}
 		switch (type)
 		{
-			case UnitScript.UnitType.BASS:
+			case PuppetType.BASS:
 				UpdateBassUnits(team);
 				break;
-			case UnitScript.UnitType.TREBLE:
+			case PuppetType.TREBLE:
 				UpdateTrebleUnits(team);
 				break;
 		}

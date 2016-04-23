@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using PuppetType = ConstFile.PuppetType;
 
 [System.Serializable]
 public class TeamBase
@@ -73,7 +74,7 @@ public class GameManager : MonoBehaviour
     public static Transform _Right;
     public static int _ArenaDiv;
 
-    public delegate void UnitDel(int team, ref GameObject unit, UnitScript.UnitType type);
+    public delegate void UnitDel(int team, GameObject unit, PuppetType type);
     public static event UnitDel AddUnit;
     public static event UnitDel RemoveUnit;
 
@@ -153,7 +154,7 @@ public class GameManager : MonoBehaviour
     
 
     // Adds new unit to proper list and sends event to all listeners.
-    public static void AddNewUnit(int team, ref GameObject unit, UnitScript.UnitType type)
+    public static void AddNewUnit(int team, GameObject unit, PuppetType type)
     {
 		switch (team)
         {
@@ -161,10 +162,10 @@ public class GameManager : MonoBehaviour
                 _LeftUnits.Add(unit);
 				switch (type)
 				{
-					case UnitScript.UnitType.BASS:
+					case PuppetType.BASS:
 						_LeftBass.Add(unit);
 						break;
-					case UnitScript.UnitType.TREBLE:
+					case PuppetType.TREBLE:
 						_LeftTreble.Add(unit);
 						break;
 				}
@@ -173,10 +174,10 @@ public class GameManager : MonoBehaviour
                 _RightUnits.Add(unit);
 				switch (type)
 				{
-					case UnitScript.UnitType.BASS:
+					case PuppetType.BASS:
 						_RightBass.Add(unit);
 						break;
-					case UnitScript.UnitType.TREBLE:
+					case PuppetType.TREBLE:
 						_RightTreble.Add(unit);
 						break;
 				}
@@ -184,11 +185,11 @@ public class GameManager : MonoBehaviour
         }
 		if (AddUnit != null)
 		{
-			AddUnit(team, ref unit, type);
+			AddUnit(team, unit, type);
 		}
     }
 
-    public static void RemoveDeadUnit(int team, GameObject unit, UnitScript.UnitType type)
+    public static void RemoveDeadUnit(int team, GameObject unit, PuppetType type)
     {
 		switch (team)
         {
@@ -196,10 +197,10 @@ public class GameManager : MonoBehaviour
                 _LeftUnits.Remove(unit);
 				switch (type)
 				{
-					case UnitScript.UnitType.BASS:
+					case PuppetType.BASS:
 						_LeftBass.Remove(unit);
 						break;
-					case UnitScript.UnitType.TREBLE:
+					case PuppetType.TREBLE:
 						_LeftTreble.Remove(unit);
 						break;
 				}
@@ -208,10 +209,10 @@ public class GameManager : MonoBehaviour
                 _RightUnits.Remove(unit);
 				switch (type)
 				{
-					case UnitScript.UnitType.BASS:
+					case PuppetType.BASS:
 						_RightUnits.Remove(unit);
 						break;
-					case UnitScript.UnitType.TREBLE:
+					case PuppetType.TREBLE:
 						_RightUnits.Remove(unit);
 						break;
 				}
@@ -219,7 +220,9 @@ public class GameManager : MonoBehaviour
         }
 		if (RemoveUnit != null)
 		{
-			RemoveUnit(team, ref unit, type);
+			RemoveUnit(team, unit, type);
 		}
     }
+
+	
 }

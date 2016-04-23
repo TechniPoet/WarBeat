@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using GM = GameManager;
+using PuppetType = ConstFile.PuppetType;
 
 public class SpawnMaster : MonoBehaviour {
     bool init = false;
@@ -79,7 +80,7 @@ public class SpawnMaster : MonoBehaviour {
 			newUnit.transform.Rotate(new Vector3(0,0, 180));
 		}
 
-		GM.AddNewUnit(team, ref newUnit, UnitScript.UnitType.TREBLE);
+		GM.AddNewUnit(team, newUnit, PuppetType.TREBLE);
 	}
 
 
@@ -116,6 +117,6 @@ public class SpawnMaster : MonoBehaviour {
 			newUnit.transform.Rotate(new Vector3(0, 0, 180));
 		}
 
-		GM.AddNewUnit(team, ref newUnit, UnitScript.UnitType.BASS);
+		GM.AddNewUnit(team, newUnit, PuppetType.BASS);
 	}
 }

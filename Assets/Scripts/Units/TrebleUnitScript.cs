@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Actions = ConstFile.Actions;
+using PuppetType = ConstFile.PuppetType;
 
+[SelectionBase]
 public class TrebleUnitScript : UnitScript
 {
     public GameObject bullet;
@@ -9,7 +11,7 @@ public class TrebleUnitScript : UnitScript
 	float aggrAtkDist;
 	float defAtkDist;
 
-	new void Update()
+	protected override void Update()
     {
         base.Update();
 		DebugExtension.DebugCircle(transform.position, Vector3.forward, GameManager._TUnit.aggrAtkDist);
@@ -19,9 +21,9 @@ public class TrebleUnitScript : UnitScript
         float newStartE, float newGainRate, float newMoveCost, float newAtkCost,
         float newMoveSpeed, float newAtkSpeed, float newAtkLifeSpan)
     {
-        UnitSetup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
+        Setup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
         newMoveSpeed, newAtkSpeed, newAtkLifeSpan);
-		currType = UnitType.TREBLE;
+		currType = PuppetType.TREBLE;
 
 		AIManager.UnitAIs u;
 		if (team == 0)

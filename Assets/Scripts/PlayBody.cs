@@ -4,7 +4,7 @@ using System.Collections;
 
 public class PlayBody : MonoBehaviour {
 
-	public delegate void voidDel(UnitScript u);
+	public delegate void voidDel(Puppet u);
 	public event voidDel UnitHit;
 	public int team;
 	
@@ -16,13 +16,15 @@ public class PlayBody : MonoBehaviour {
 	
 	void OnTriggerEnter2D(Collider2D col)
 	{
-		if (col.GetComponent<UnitScript>() != null)
+		if (col.GetComponent<Puppet>() != null)
 		{
-			if (col.GetComponent<UnitScript>().team == team)
+			if (col.GetComponent<Puppet>().team == team)
 			{
+				DebugPanel.Log("found1", col.GetComponent<Puppet>().id.ToString(), col.GetComponent<Puppet>().id);
 				if (UnitHit != null)
 				{
-					UnitHit(col.GetComponent<UnitScript>());
+					DebugPanel.Log("found", col.GetComponent<Puppet>().id.ToString(), col.GetComponent<Puppet>().id);
+					UnitHit(col.GetComponent<Puppet>());
 				}
 			}
 		}

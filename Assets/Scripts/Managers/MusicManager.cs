@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GAudio;
 using System.Collections;
+using PuppetType = ConstFile.PuppetType;
 
 public class MusicManager : MonoBehaviour
 {
@@ -117,18 +118,23 @@ public class MusicManager : MonoBehaviour
 
 	void Play(List<PlayInstructs> instructs, ConstFile.Notes note)
 	{
+		DebugPanel.Log(note.ToString(), "W/E", instructs.Count);
 		IGATProcessedSample sample;
 		string[] noteArr;
 		while (GATManager.DefaultPlayer.NbOfTracks < 20)
 		{
+			
 			GATManager.DefaultPlayer.AddTrack<GATTrack>();
+			/*
 			noteArr = chords[chordIndex];
+
 			sample = sampleBank.GetProcessedSample(string.Format(noteArr[0], 3), wholeEnv);
 			sample.Play(0);
 			sample = sampleBank.GetProcessedSample(string.Format(noteArr[1], 3), wholeEnv);
 			sample.Play(0);
 			sample = sampleBank.GetProcessedSample(string.Format(noteArr[2], 3), wholeEnv);
 			sample.Play(0);
+			*/
 		}
 		noteArr = chords[chordIndex];
 		if (note == ConstFile.Notes.WHOLE)
@@ -170,10 +176,11 @@ public class MusicManager : MonoBehaviour
 			if (instructs[i].Alive())
 			{
 				instructs[i].MakeMove();
-				if (instructs[i].action != ConstFile.Actions.REST)
+				if (instructs[i].action != ConstFile.Actions.REST || instructs[i].puppetType() == ConstFile.PuppetType.TOWER)
 				{
 					int noteInd = ArenaGrid.FindSubsection(noteArr.Length, instructs[i].y);
-					sample = sampleBank.GetProcessedSample(string.Format(noteArr[noteInd], 3), env);
+					int octave = instructs[i].puppetType() == PuppetType.BASS ? 2 : 4;
+					sample = sampleBank.GetProcessedSample(string.Format(noteArr[noteInd], octave), env);
 					sample.Play(0);
 					//Debug.Log("Played " + instructs[i].note);
 				}
@@ -190,7 +197,7 @@ public class MusicManager : MonoBehaviour
 		float sampleRate = 44100;
 
 		int len = Mathf.FloorToInt( (ConstFile.NoteBPMCalcs[(int)note]/BPM) * sampleRate);
-		int fadeIn = 0;
+		int fadeIn = Mathf.FloorToInt((sampleRate * len) / 135000);
 		int fadeOut = Mathf.FloorToInt( (sampleRate * len) / 4);
 		int offset = 0;
 		bool normalize = false;
@@ -242,10 +249,10 @@ public class MusicManager : MonoBehaviour
 
 			switch (u.currType)
 			{
-				case UnitScript.UnitType.TREBLE:
+				case PuppetType.TREBLE:
 					register = Random.Range(3, 4);
 					break;
-				case UnitScript.UnitType.BASS:
+				case PuppetType.BASS:
 					register = Random.Range(1, 2);
 					break;
 				default:

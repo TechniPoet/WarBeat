@@ -34,7 +34,6 @@ public class NoteManager : MonoBehaviour, IGATPulseClient
 
 	public void OnPulse(IGATPulseInfo pulseInfo)
 	{
-		print("Note Manager pulse: " + pulseInfo.StepIndex + " note: " + note);
 		if (PlayNotesEvent != null)
 		{
 			PlayNotesEvent(NoteQue, note);
@@ -49,7 +48,6 @@ public class NoteManager : MonoBehaviour, IGATPulseClient
 
 	public void AddInstruct(PlayInstructs newInstruct)
 	{
-		print("Add instrux " + newInstruct);
 		NoteQue.Add(newInstruct);
 	}
 
