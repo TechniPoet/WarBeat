@@ -109,7 +109,7 @@ public abstract class UnitScript : Puppet, IGATPulseClient
 		if (!actionMade)
 		{
 			currAction = Actions.REST;
-			currNote = ConstFile.Notes.SIXTEENTH;
+			currNote = ConstFile.Notes.EIGHTH;
 		}
 		DebugPanel.Log("Qued Action", "Unit" + id, string.Format("{0}:{1} | {2}", Time.time, currAction, currNote));
 	}
