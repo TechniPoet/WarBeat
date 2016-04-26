@@ -171,22 +171,27 @@ public class ArenaGrid : UnitySingleton<ArenaGrid>
 			GameObject g = Instantiate(playHead, new Vector3( playLX +((playArenaWidth/16) * i), tY), Quaternion.identity) as GameObject;
 			if (i % 16 == 0)
 			{
+				g.transform.localScale = new Vector3(1.5f, 1.5f);
 				g.GetComponent<NoteHead>().whole.SetActive(true);
 			}
 			if (i % 8 == 0)
 			{
+				g.transform.localScale = new Vector3(1.3f, 1.3f);
 				g.GetComponent<NoteHead>().half.SetActive(true);
 			}
 			else if (i % 4 == 0)
 			{
+				g.transform.localScale = new Vector3(1.1f, 1.1f);
 				g.GetComponent<NoteHead>().quarter.SetActive(true);
 			}
 			else if (i % 2 == 0)
 			{
+				g.transform.localScale = new Vector3(.9f, .9f);
 				g.GetComponent<NoteHead>().eigth.SetActive(true);
 			}
 			else
 			{
+				g.transform.localScale = new Vector3(.7f, .7f);
 				g.GetComponent<NoteHead>().sixteenth.SetActive(true);
 			}
 			g.transform.SetParent(lines);
