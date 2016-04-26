@@ -61,6 +61,7 @@ public static class ConstFile
 
 	public static string[] ActionsText = new string[] { "Attack", "Move Forward", "Move to Enemy", "Move Back", "Rest" };
 
+	public static float BPM = 60;
 	public enum Notes : int
 	{
 		WHOLE = 0,

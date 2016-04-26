@@ -15,6 +15,9 @@ public abstract class Puppet : Mortal
 	public int id;
 	public Vector2 gridLocation;
 
+	public delegate void AddEnergy(float amt, int team);
+	public static event AddEnergy UnitDied;
+
 	protected virtual void Start()
 	{
 		GameManager.AddUnit += EnemyAdd;
@@ -56,9 +59,18 @@ public abstract class Puppet : Mortal
 
 	protected abstract void Attack();
 
-	public abstract void MakeMove(PlayInstructs instrux);
+	public virtual void MakeMove(PlayInstructs instrux)
+	{
+		Color col = GetComponentInChildren<SpriteRenderer>().color;
+		GetComponentInChildren<SpriteRenderer>().color = new Color(col.r, col.g, col.b, 1);
+	}
 
-	public abstract PlayInstructs CurrInstruction();
+	public virtual PlayInstructs CurrInstruction()
+	{
+		Color col = GetComponentInChildren<SpriteRenderer>().color;
+		GetComponentInChildren<SpriteRenderer>().color = new Color(col.r, col.g, col.b, .5f);
+		return null;
+	}
 
 	protected abstract void Rest();
 
@@ -86,6 +98,16 @@ public abstract class Puppet : Mortal
 	{
 		if (energy <= 0)
 		{
+			if (team == 0)
+			{
+				UnitDied(maxEnergy / 20, 0);
+				UnitDied(maxEnergy / 17, 1);
+			}
+			else
+			{
+				UnitDied(maxEnergy / 17, 0);
+				UnitDied(maxEnergy / 20, 1);
+			}
 			GameManager.AddUnit -= EnemyAdd;
 			GameManager.RemoveUnit -= EnemyRemove;
 			GameManager.RemoveDeadUnit(team, this.gameObject, currType);

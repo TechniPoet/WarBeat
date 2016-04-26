@@ -21,8 +21,6 @@ public class MusicManager : MonoBehaviour
 	public NoteManager eigthManager;
 	public NoteManager sixteenthManager;
 
-	int BPM = 120;
-
 	GATEnvelope wholeEnv;
 	GATEnvelope halfEnv;
 	GATEnvelope quarterEnv;
@@ -33,7 +31,11 @@ public class MusicManager : MonoBehaviour
     int numNotes = 4;
     public static bool _PInit = false;
     public static List<UnitScript> units = new List<UnitScript>();
-
+	int sixteenthCnt = 0;
+	int eigthCnt = 0;
+	int quarterCnt = 0;
+	int halfCnt = 0;
+	int wholeCnt = 0;
 
 	int chordIndex = 0;
 	List<string[]> chords;
@@ -137,11 +139,52 @@ public class MusicManager : MonoBehaviour
 			*/
 		}
 		noteArr = chords[chordIndex];
-		if (note == ConstFile.Notes.WHOLE)
+		GATData mySampleData;
+		switch (note)
 		{
-			chordIndex++;
-			chordIndex = chordIndex % chords.Count;
-
+			case ConstFile.Notes.WHOLE:
+				chordIndex++;
+				chordIndex = chordIndex % chords.Count;
+				wholeCnt++;
+				halfCnt = -1;
+				quarterCnt = -1;
+				eigthCnt = -1;
+				sixteenthCnt = -1;
+				sampleBank.FlushCacheForEnvelope(wholeEnv);
+				sampleBank.FlushCacheForEnvelope(halfEnv);
+				sampleBank.FlushCacheForEnvelope(quarterEnv);
+				sampleBank.FlushCacheForEnvelope(eigthEnv);
+				sampleBank.FlushCacheForEnvelope(sixteenthEnv);
+				break;
+			case ConstFile.Notes.HALF:
+				halfCnt++;
+				break;
+			case ConstFile.Notes.QUARTER:
+				quarterCnt++;
+				if (quarterCnt % 4 == 1 || quarterCnt % 4 == 3)
+				{
+					mySampleData = sampleBank.GetAudioData("clap-808");
+					GATManager.DefaultPlayer.PlayData(mySampleData, 1, 1);
+				}
+				break;
+			case ConstFile.Notes.EIGHTH:
+				eigthCnt++;
+				if (eigthCnt % 8 == 0 || eigthCnt % 8 == 1 || eigthCnt % 8 == 5)
+				{
+					mySampleData = sampleBank.GetAudioData("kick-gritty");
+					GATManager.DefaultPlayer.PlayData(mySampleData, 1, 1);
+				}
+				mySampleData = sampleBank.GetAudioData(string.Format(noteArr[0], 2));
+				GATManager.DefaultPlayer.PlayData(mySampleData, 3, .2f);
+				break;
+			case ConstFile.Notes.SIXTEENTH:
+				sixteenthCnt++;
+				if ((sixteenthCnt % 16 == 14 || sixteenthCnt % 16 == 15) && wholeCnt % 2 == 0)
+				{
+					mySampleData = sampleBank.GetAudioData("hihat-808");
+					GATManager.DefaultPlayer.PlayData(mySampleData, 2, 1);
+				}
+				break;
 		}
 
 		if (instructs.Count == 0)
@@ -178,14 +221,21 @@ public class MusicManager : MonoBehaviour
 				instructs[i].MakeMove();
 				if (instructs[i].action != ConstFile.Actions.REST || instructs[i].puppetType() == ConstFile.PuppetType.TOWER)
 				{
-					int noteInd = ArenaGrid.FindSubsection(noteArr.Length, instructs[i].y);
+					// Attempt to double size of note area for more variance.
+					int noteInd = ArenaGrid.FindSubsection(noteArr.Length * 2, instructs[i].y);
 					int octave = instructs[i].puppetType() == PuppetType.BASS ? 2 : 4;
+					if (noteInd > noteArr.Length)
+					{
+						octave++;
+					}
+					noteInd = noteInd % noteArr.Length;
 					sample = sampleBank.GetProcessedSample(string.Format(noteArr[noteInd], octave), env);
 					sample.Play(0);
 					//Debug.Log("Played " + instructs[i].note);
 				}
 			}
 		}
+		
 	}
 
 
@@ -196,7 +246,7 @@ public class MusicManager : MonoBehaviour
 	{
 		float sampleRate = 44100;
 
-		int len = Mathf.FloorToInt( (ConstFile.NoteBPMCalcs[(int)note]/BPM) * sampleRate);
+		int len = Mathf.FloorToInt( (ConstFile.NoteBPMCalcs[(int)note]/ConstFile.BPM) * sampleRate);
 		int fadeIn = Mathf.FloorToInt((sampleRate * len) / 135000);
 		int fadeOut = Mathf.FloorToInt( (sampleRate * len) / 4);
 		int offset = 0;
@@ -219,11 +269,11 @@ public class MusicManager : MonoBehaviour
 		sampleBank.LoadFinished += StartPulse;
 		sampleBank.SoundBank = toLoad;
 		sampleBank.LoadAll();
-		wholeEnv = CreateEnvelope(ConstFile.Notes.WHOLE, BPM);
-		halfEnv = CreateEnvelope(ConstFile.Notes.HALF, BPM);
-		quarterEnv = CreateEnvelope(ConstFile.Notes.QUARTER, BPM);
-		eigthEnv = CreateEnvelope(ConstFile.Notes.EIGHTH, BPM);
-		sixteenthEnv = CreateEnvelope(ConstFile.Notes.SIXTEENTH, BPM);
+		wholeEnv = CreateEnvelope(ConstFile.Notes.WHOLE, ConstFile.BPM);
+		halfEnv = CreateEnvelope(ConstFile.Notes.HALF, ConstFile.BPM);
+		quarterEnv = CreateEnvelope(ConstFile.Notes.QUARTER, ConstFile.BPM);
+		eigthEnv = CreateEnvelope(ConstFile.Notes.EIGHTH, ConstFile.BPM);
+		sixteenthEnv = CreateEnvelope(ConstFile.Notes.SIXTEENTH, ConstFile.BPM);
 	}
 
 

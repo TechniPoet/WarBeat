@@ -24,26 +24,19 @@ public class UnitCommander : MonoBehaviour
 		UpdateBassUnits(1);
 		UpdateTrebleUnits(0);
 		UpdateTrebleUnits(1);
-    }
+		GameManager.AddUnit += NewUnit;
+	}
 
 
     // Update is called once per frame
     void Update()
     {
-        foreach (BeatSwitches b in switches)
-        {
-            b.SwitchChanged += ActionChange;
-        }
-		UpdateBassUnits(0);
-		UpdateBassUnits(1);
-		UpdateTrebleUnits(0);
-		UpdateTrebleUnits(1);
-        
+	}
 
-		UpdateBassUnits(0);
-		//UpdateBassUnits(1);
-		UpdateTrebleUnits(0);
-		//UpdateTrebleUnits(1);
+	void NewUnit(int team, GameObject unit, PuppetType type)
+	{
+		UpdateBassUnits(team);
+		UpdateTrebleUnits(team);
 	}
 
 	void ActionChange(int team, int beatNum, UnitScript.Strategies newAction, PuppetType type)
@@ -90,21 +83,21 @@ public class UnitCommander : MonoBehaviour
 		switch (team)
 		{
 			case 0:
-				for (int i = 0; i < GameManager._LeftBass.Count; i++)
+				for (int i = 0; i < GameManager._LeftUnitBass.Count; i++)
 				{
-					if (GameManager._LeftBass[i] != null)
+					if (GameManager._LeftUnitBass[i] != null)
 					{
-						GameManager._LeftBass[i].GetComponent<UnitScript>().UpdateActionPattern(actionPatternZeroBass[0]);
+						GameManager._LeftUnitBass[i].UpdateActionPattern(actionPatternZeroBass[0]);
 					}
 					
 				}
 				break;
 			case 1:
-				for (int i = 0; i < GameManager._RightBass.Count; i++)
+				for (int i = 0; i < GameManager._RightUnitBass.Count; i++)
 				{
-					if (GameManager._RightBass[i] != null)
+					if (GameManager._RightUnitBass[i] != null)
 					{
-						GameManager._RightBass[i].GetComponent<UnitScript>().UpdateActionPattern(actionPatternOneBass[0]);
+						GameManager._RightUnitBass[i].UpdateActionPattern(actionPatternOneBass[0]);
 					}
 					
 				}
@@ -117,18 +110,18 @@ public class UnitCommander : MonoBehaviour
 		switch (team)
 		{
 			case 0:
-				for (int i = 0; i < GameManager._LeftTreble.Count; i++)
+				for (int i = 0; i < GameManager._LeftUnitTreble.Count; i++)
 				{
-					UnitScript u = GameManager._LeftTreble[i].GetComponent<UnitScript>();
+					UnitScript u = GameManager._LeftUnitTreble[i];
 					u.UpdateActionPattern(actionPatternZeroTreble[0]);
 				}
 				break;
 			case 1:
 				for (int i = 0; i < GameManager._RightTreble.Count; i++)
 				{
-					if (GameManager._RightTreble[i] != null)
+					if (GameManager._RightUnitTreble[i] != null)
 					{
-						GameManager._RightTreble[i].GetComponent<UnitScript>().UpdateActionPattern(actionPatternOneTreble[0]);
+						GameManager._RightUnitTreble[i].UpdateActionPattern(actionPatternOneTreble[0]);
 					}
 				}
 				break;

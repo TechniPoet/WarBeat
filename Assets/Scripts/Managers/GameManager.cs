@@ -101,9 +101,16 @@ public class GameManager : MonoBehaviour
     public static List<GameObject> _LeftUnits;
 	public static List<GameObject> _LeftBass;
 	public static List<GameObject> _LeftTreble;
+
+
     public static List<GameObject> _RightUnits;
 	public static List<GameObject> _RightBass;
 	public static List<GameObject> _RightTreble;
+
+	public static List<UnitScript> _LeftUnitBass;
+	public static List<UnitScript> _LeftUnitTreble;
+	public static List<UnitScript> _RightUnitBass;
+	public static List<UnitScript> _RightUnitTreble;
 
 	// Use this for initialization
 	void Awake ()
@@ -115,6 +122,12 @@ public class GameManager : MonoBehaviour
 		_RightUnits = new List<GameObject>();
 		_RightBass = new List<GameObject>();
 		_RightTreble = new List<GameObject>();
+
+		_RightUnitBass = new List<UnitScript>();
+		_RightUnitTreble = new List<UnitScript>();
+		_LeftUnitBass = new List<UnitScript>();
+		_LeftUnitTreble = new List<UnitScript>();
+
 		UpdateStatics();
         _Init = true;
         leftTeam.triggerScript.Setup(leftTeam.baseStartEnergy, leftTeam.baseMaxEnergy, leftTeam.energyGainPerSecond);
@@ -148,6 +161,8 @@ public class GameManager : MonoBehaviour
         }
 		bassButton.interactable = (leftTeam.triggerScript.energy - _BUnit.spawnCost) > 0;
 		trebleButton.interactable = (leftTeam.triggerScript.energy - _TUnit.spawnCost) > 0;
+
+		
 		
 	}
 
@@ -164,9 +179,11 @@ public class GameManager : MonoBehaviour
 				{
 					case PuppetType.BASS:
 						_LeftBass.Add(unit);
+						_LeftUnitBass.Add(unit.GetComponent<UnitScript>());
 						break;
 					case PuppetType.TREBLE:
 						_LeftTreble.Add(unit);
+						_LeftUnitTreble.Add(unit.GetComponent<UnitScript>());
 						break;
 				}
                 break;
@@ -176,32 +193,54 @@ public class GameManager : MonoBehaviour
 				{
 					case PuppetType.BASS:
 						_RightBass.Add(unit);
+						_RightUnitBass.Add(unit.GetComponent<UnitScript>());
 						break;
 					case PuppetType.TREBLE:
 						_RightTreble.Add(unit);
+						_RightUnitTreble.Add(unit.GetComponent<UnitScript>());
 						break;
 				}
 				break;
         }
+		
 		if (AddUnit != null)
 		{
 			AddUnit(team, unit, type);
 		}
+		
     }
 
     public static void RemoveDeadUnit(int team, GameObject unit, PuppetType type)
     {
+		int ind = -1;
 		switch (team)
         {
             case 0:
                 _LeftUnits.Remove(unit);
+				
 				switch (type)
 				{
 					case PuppetType.BASS:
-						_LeftBass.Remove(unit);
+						for (int i = 0; i < _LeftBass.Count; i++)
+						{
+							if (_LeftBass[i] == unit)
+							{
+								ind = i;
+							}
+						}
+						_LeftBass.RemoveAt(ind);
+						_LeftUnitBass.RemoveAt(ind);
 						break;
 					case PuppetType.TREBLE:
-						_LeftTreble.Remove(unit);
+						for (int i = 0; i < _LeftTreble.Count; i++)
+						{
+							if (_LeftTreble[i] == unit)
+							{
+								ind = i;
+							}
+						}
+						_LeftTreble.RemoveAt(ind);
+						_LeftUnitTreble.RemoveAt(ind);
 						break;
 				}
 				break;
@@ -210,10 +249,26 @@ public class GameManager : MonoBehaviour
 				switch (type)
 				{
 					case PuppetType.BASS:
-						_RightUnits.Remove(unit);
+						for (int i = 0; i < _RightBass.Count; i++)
+						{
+							if (_RightBass[i] == unit)
+							{
+								ind = i;
+							}
+						}
+						_RightBass.RemoveAt(ind);
+						_RightUnitBass.RemoveAt(ind);
 						break;
 					case PuppetType.TREBLE:
-						_RightUnits.Remove(unit);
+						for (int i = 0; i < _RightTreble.Count; i++)
+						{
+							if (_RightTreble[i] == unit)
+							{
+								ind = i;
+							}
+						}
+						_RightTreble.RemoveAt(ind);
+						_RightUnitTreble.RemoveAt(ind);
 						break;
 				}
 				break;

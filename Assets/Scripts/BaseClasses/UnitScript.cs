@@ -70,8 +70,8 @@ public abstract class UnitScript : Puppet, IGATPulseClient
     protected float deltaPulseTime = 0;
 
 	
-	
-	
+
+
 	#endregion
 
 
@@ -146,6 +146,7 @@ public abstract class UnitScript : Puppet, IGATPulseClient
 
 	public override void MakeMove(PlayInstructs instruct)
 	{
+		base.MakeMove(instruct);
 		currNote = instruct.note;
 		switch (instruct.action)
 		{
@@ -253,6 +254,8 @@ public abstract class UnitScript : Puppet, IGATPulseClient
 		if (dead)
 		{
 			MusicManager.units.Remove((UnitScript)this);
+			
+			
 		}
 		base.DeathMethod();
     }
@@ -336,10 +339,18 @@ public abstract class UnitScript : Puppet, IGATPulseClient
     
 	public override PlayInstructs CurrInstruction()
 	{
+		base.CurrInstruction();
 		if (enemyList.Count > 0)
 		{
 			SortEnemyList();
-			currTarget = enemyList[0].transform.position;
+			while (enemyList[0] == null && enemyList.Count > 0)
+			{
+				enemyList.RemoveAt(0);
+			}
+			if (enemyList.Count > 0)
+			{
+				currTarget = enemyList[0].transform.position;
+			}
 		} 
 		
 		switch (actionPattern[0])

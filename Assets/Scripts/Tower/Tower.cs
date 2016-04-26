@@ -61,6 +61,11 @@ public class Tower : Puppet
 
 	public override void MakeMove(PlayInstructs instructs)
 	{
+
+		Color col = sprite1.color;
+		sprite1.color = new Color(col.r, col.g, col.b, 1);
+		col = sprite2.color;
+		sprite2.color = new Color(col.r, col.g, col.b, 1);
 		switch (instructs.action)
 		{
 			case Actions.REST:
@@ -83,7 +88,7 @@ public class Tower : Puppet
 		atkDir.Normalize();
 		Vector2 spawnPos = new Vector2(transform.position.x, transform.position.y) + atkDir;
 		GameObject newBul = Instantiate(bullet, spawnPos, Quaternion.identity) as GameObject;
-		newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkCost* 1.3f * NoteMult);
+		newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkCost* 2.5f * NoteMult);
 		TakeDamage(atkCost * NoteMult);
 		currAction = Actions.ATTACK;
 	}
@@ -96,11 +101,15 @@ public class Tower : Puppet
 
 	public override PlayInstructs CurrInstruction()
 	{
+		Color col = sprite1.color;
+		sprite1.color = new Color(col.r, col.g, col.b, .5f);
+		col = sprite2.color;
+		sprite2.color = new Color(col.r, col.g, col.b, .5f);
 		if (enemyList.Count > 0)
 		{
 			SortEnemyList();
 			currTarget = enemyList[0].transform.position;
-			if (ArenaGrid.GridDistance(currTarget, transform.position) <= atkDist)
+			if (ArenaGrid.GridDistance(currTarget, transform.position) <= atkDist && energy - (atkCost * NoteMult) > 0)
 			{
 				currAction = Actions.ATTACK;
 			}

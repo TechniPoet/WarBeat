@@ -14,7 +14,7 @@ public class PlayHead : MonoBehaviour, IGATPulseClient
 	public int team;
 	public NoteManager eigthManager;
 	List<GameObject> intervals;
-	float trip = (ConstFile.NoteBPMCalcs[(int)ConstFile.Notes.HALF] * 2) / 120;
+	float trip = (ConstFile.NoteBPMCalcs[(int)ConstFile.Notes.WHOLE]) / ConstFile.BPM;
 
 	public PulseModule pulse;
 	List<int> unitCache = new List<int>();
@@ -50,7 +50,7 @@ public class PlayHead : MonoBehaviour, IGATPulseClient
 	// Update is called once per frame
 	void Update ()
 	{
-		GetComponent<Rigidbody2D>().velocity = new Vector2(ArenaGrid.arenaWidth / trip, 0);
+		GetComponent<Rigidbody2D>().velocity = new Vector2(ArenaGrid.playArenaWidth / trip, 0);
 	}
 
 	void PlayUnit(Puppet u)
@@ -66,6 +66,9 @@ public class PlayHead : MonoBehaviour, IGATPulseClient
 
 		switch (instruct.note)
 		{
+			case ConstFile.Notes.WHOLE:
+				mm.wholeManager.AddInstruct(instruct);
+				break;
 			case ConstFile.Notes.HALF:
 				//Debug.Log("added half");
 				mm.halfManager.AddInstruct(instruct);
@@ -93,10 +96,10 @@ public class PlayHead : MonoBehaviour, IGATPulseClient
 			switch(team)
 			{
 				case 0:
-					transform.position = new Vector3(ArenaGrid.lX, intervals[0].transform.position.y);
+					transform.position = new Vector3(ArenaGrid.playLX, intervals[0].transform.position.y);
 					break;
 				case 1:
-					transform.position = new Vector3(ArenaGrid.rX, intervals[0].transform.position.y);
+					transform.position = new Vector3(ArenaGrid.playRX, intervals[0].transform.position.y);
 					break;
 			}
 		}

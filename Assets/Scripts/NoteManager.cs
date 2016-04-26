@@ -12,6 +12,7 @@ public class NoteManager : MonoBehaviour, IGATPulseClient
 	public event NotePass PlayNotesEvent;
 	public GATActiveSampleBank sampleBank;
 	public List<PlayInstructs> NoteQue;
+	int cnt = 0;
 	PulseModule pulse;
 	PulseModule _Pulse
 	{

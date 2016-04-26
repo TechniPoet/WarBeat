@@ -11,6 +11,8 @@ public class ArenaGrid : UnitySingleton<ArenaGrid>
 	public Transform topPos;
 	public Transform bottomPos;
 	public Transform lines;
+	public Transform playLeftPos;
+	public Transform playRightPos;
 
 
 	public static Vector2[,] grid;
@@ -27,6 +29,9 @@ public class ArenaGrid : UnitySingleton<ArenaGrid>
 	public static float midX, midY;
 	public static float arenaWidth;
 	public static float arenaHeight;
+	public static float playLX;
+	public static float playRX;
+	public static float playArenaWidth;
 
 	//private int currLines = 0;
 	
@@ -161,16 +166,36 @@ public class ArenaGrid : UnitySingleton<ArenaGrid>
 		}
 
 
-		for (int i = 1; i < 5; i++)
+		for (int i = 1; i < 17; i++)
 		{
-			GameObject g = Instantiate(playHead, new Vector3( lX +((arenaWidth/4) * i), tY), Quaternion.identity) as GameObject;
+			GameObject g = Instantiate(playHead, new Vector3( playLX +((playArenaWidth/16) * i), tY), Quaternion.identity) as GameObject;
+			if (i % 16 == 0)
+			{
+				g.GetComponent<NoteHead>().whole.SetActive(true);
+			}
+			if (i % 8 == 0)
+			{
+				g.GetComponent<NoteHead>().half.SetActive(true);
+			}
+			else if (i % 4 == 0)
+			{
+				g.GetComponent<NoteHead>().quarter.SetActive(true);
+			}
+			else if (i % 2 == 0)
+			{
+				g.GetComponent<NoteHead>().eigth.SetActive(true);
+			}
+			else
+			{
+				g.GetComponent<NoteHead>().sixteenth.SetActive(true);
+			}
 			g.transform.SetParent(lines);
 			leftPlayHeads.Add(g);
 		}
 
 		for (int i = 1; i < 5; i++)
 		{
-			GameObject g = Instantiate(playHead, new Vector3(rX - ((arenaWidth / 4) * i), bY), Quaternion.identity) as GameObject;
+			GameObject g = Instantiate(playHead, new Vector3(playRX - ((playArenaWidth / 4) * i), bY), Quaternion.identity) as GameObject;
 			g.GetComponent<SpriteRenderer>().flipY = false;
 			g.transform.SetParent(lines);
 			rightPlayHeads.Add(g);
@@ -193,5 +218,8 @@ public class ArenaGrid : UnitySingleton<ArenaGrid>
 		bY = bottomPos.position.y;
 		arenaWidth = rX - lX;
 		arenaHeight = tY - bY;
+		playLX = playLeftPos.position.x;
+		playRX = playRightPos.position.x;
+		playArenaWidth = playRX - playLX;
 	}
 }

@@ -37,7 +37,7 @@ public class BasicAIController : MonoBehaviour {
 			energyPercent = randEnergyThresh ? Random.Range(lowEnergy, highEnergy) : lowEnergy;
 			
 			
-			if (bs.energy < (energyPercent * bs.MaxEnergy))
+			if (bs.energy < (energyPercent * bs.MaxEnergy) || bs.energy <= 100)
 			{
 				yield return new WaitForSeconds(waitForRegenTime);
 			}
