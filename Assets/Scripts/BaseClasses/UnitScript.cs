@@ -211,7 +211,12 @@ public abstract class UnitScript : Puppet, IGATPulseClient
 				actionPattern = new Strategies[] {Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE};
 
 				backMovementMod = new Vector3(100, 0, 0);
-				
+				whole.transform.Rotate(Vector3.forward, 180);
+				half.transform.Rotate(Vector3.forward, 180);
+				quarter.transform.Rotate(Vector3.forward, 180);
+				eigth.transform.Rotate(Vector3.forward, 180);
+				sixteenth.transform.Rotate(Vector3.forward, 180);
+
 				break;
         }
 
@@ -365,6 +370,7 @@ public abstract class UnitScript : Puppet, IGATPulseClient
 				Strat(neutralAI);
 				break;
 		}
+		SetNote();
 		return new PlayInstructs(currAction, currNote, transform.position.y, this);
 	}
 }

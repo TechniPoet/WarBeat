@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using Actions = ConstFile.Actions;
 
+[SelectionBase]
 public class Tower : Puppet
 {
 	public GameObject bullet;
@@ -61,7 +62,7 @@ public class Tower : Puppet
 
 	public override void MakeMove(PlayInstructs instructs)
 	{
-
+		ResetNotes();
 		Color col = sprite1.color;
 		sprite1.color = new Color(col.r, col.g, col.b, 1);
 		col = sprite2.color;
@@ -122,6 +123,7 @@ public class Tower : Puppet
 		{
 			currAction = Actions.REST;
 		}
+		SetNote();
 		return new PlayInstructs(currAction, currNote, transform.position.y, this);
 	}
 }
