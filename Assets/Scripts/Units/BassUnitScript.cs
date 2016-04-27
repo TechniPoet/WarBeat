@@ -40,7 +40,7 @@ public class BassUnitScript : UnitScript
 	{
 		Vector2 atkDir = currTarget - new Vector2(transform.position.x, transform.position.y);
 		atkDir.Normalize();
-		Vector2 spawnPos = new Vector2(transform.position.x, transform.position.y) + atkDir;
+		Vector2 spawnPos = new Vector2(transform.position.x, transform.position.y);
 		GameObject newBul = Instantiate(bullet, spawnPos, Quaternion.identity) as GameObject;
 		newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkCost * NoteMult);
 		TakeDamage(atkCost * NoteMult);

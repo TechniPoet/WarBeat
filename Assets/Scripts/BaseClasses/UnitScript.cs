@@ -178,7 +178,7 @@ public abstract class UnitScript : Puppet, IGATPulseClient
         mainTarget = target.transform;
         energy = newStartE;
         maxEnergy = newStartE;
-        gainRate = newGainRate;
+        
         lastPulseTime = Time.time;
         moveSpeed = newMoveSpeed;
         attackSpeed = newAtkSpeed;
@@ -203,13 +203,13 @@ public abstract class UnitScript : Puppet, IGATPulseClient
         {
             case 0:
 				GetComponentInChildren<SpriteRenderer>().color = Color.blue;
-
+				gainRate = newGainRate;
 				backMovementMod = new Vector3(-100, 0, 0);
 				break;
             case 1:
 				GetComponentInChildren<SpriteRenderer>().color = Color.red;
 				actionPattern = new Strategies[] {Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE};
-
+				gainRate = newGainRate/2;
 				backMovementMod = new Vector3(100, 0, 0);
 				whole.transform.Rotate(Vector3.forward, 180);
 				half.transform.Rotate(Vector3.forward, 180);

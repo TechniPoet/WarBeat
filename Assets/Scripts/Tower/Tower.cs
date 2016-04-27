@@ -45,6 +45,7 @@ public class Tower : Puppet
 		base.Start();
 		Setup(1);
 		maxEnergy = 200;
+		gainRate = 4;
 		GameManager.AddNewUnit(team, gameObject, ConstFile.PuppetType.TOWER);
 
 		switch (team)
