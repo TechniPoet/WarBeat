@@ -63,4 +63,5 @@ public class DetectorScript : MonoBehaviour {
         float yDist = Vector2.Distance(transform.position, y.transform.position);
         return xDist.CompareTo(yDist);
     }
+	
 }

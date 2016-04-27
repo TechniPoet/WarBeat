@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections;
+using Actions = ConstFile.Actions;
+using PuppetType = ConstFile.PuppetType;
 
+[SelectionBase]
 public class TrebleUnitScript : UnitScript
 {
     public GameObject bullet;
@@ -9,7 +11,7 @@ public class TrebleUnitScript : UnitScript
 	float aggrAtkDist;
 	float defAtkDist;
 
-	new void Update()
+	protected override void Update()
     {
         base.Update();
 		DebugExtension.DebugCircle(transform.position, Vector3.forward, GameManager._TUnit.aggrAtkDist);
@@ -19,60 +21,23 @@ public class TrebleUnitScript : UnitScript
         float newStartE, float newGainRate, float newMoveCost, float newAtkCost,
         float newMoveSpeed, float newAtkSpeed, float newAtkLifeSpan)
     {
-        UnitSetup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
+        Setup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
         newMoveSpeed, newAtkSpeed, newAtkLifeSpan);
-		currType = UnitType.TREBLE;
-    }
+		currType = PuppetType.TREBLE;
 
-
-    #region Strategies
-
-    protected override void NeutralStrat()
-    {
-        Rest();
-    }
-
-    protected override void AggressiveStrat()
-    {
-        for (int i = 0; i < enemyList.Count; i++)
-        {
-            int front = team == 0 ? 1 : -1;
-            if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._TUnit.aggrAtkDist && ((enemyList[i].transform.position.x - transform.position.x) * front) > 0)
-            {
-                currTarget = enemyList[i].transform.position;
-                Attack();
-                return;
-            }
-        }
-        if (energy < .4f * maxEnergy)
-        {
-            Rest();
-            return;
-        }
-        MoveTowards(mainTarget.position);
-    }
-
-    protected override void DefensiveStrat()
-    {
-        for (int i = 0; i < enemyList.Count; i++)
-        {
-            int front = team == 0 ? 1 : -1;
-            if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._TUnit.defAtkDist)
-            {
-                currTarget = enemyList[i].transform.position;
-                Attack();
-                return;
-            }
-        }
-        if (energy < .8f * maxEnergy)
-        {
-            Rest();
-            return;
-        }
-        //MoveTowards(spawnPos);
-    }
-
-    #endregion
+		AIManager.UnitAIs u;
+		if (team == 0)
+		{
+			u = AIManager.TrebleUnit;
+		}
+		else
+		{
+			u = AIManager.EnemyTrebleUnit;
+		}
+		neutralAI = u.NeutralAI;
+		aggressiveAI = u.AggressiveAI;
+		defensiveAI = u.DefensiveAI;
+	}
 
     
     protected override void Attack()
@@ -82,8 +47,8 @@ public class TrebleUnitScript : UnitScript
         atkDir *= .5f;
         Vector2 spawnPos = new Vector2(transform.position.x, transform.position.y) + atkDir;
         GameObject newBul = Instantiate(bullet, spawnPos, Quaternion.identity) as GameObject;
-        newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkLife);
-        TakeDamage(atkCost);
+        newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkCost * NoteMult);
+        TakeDamage(atkCost * NoteMult);
 		currAction = Actions.ATTACK;
-    }
+	}
 }

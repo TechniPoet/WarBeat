@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using PuppetType = ConstFile.PuppetType;
 
 public class Mortal : MonoBehaviour {
     public float energy;
@@ -10,7 +11,8 @@ public class Mortal : MonoBehaviour {
     protected float minX;
     protected float maxX;
     protected float cachedY;
-    protected float maxEnergy;
+    public float maxEnergy;
+	protected bool dead;
 
 	public float MaxEnergy
 	{
@@ -19,20 +21,18 @@ public class Mortal : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
-        cachedY = energyBar.anchoredPosition.y;
+		dead = false;
+		cachedY = energyBar.anchoredPosition.y;
         maxX = energyBar.anchoredPosition.x;
         minX = energyBar.anchoredPosition.x - energyBar.rect.width;
     }
 	
-	// Update is called once per frame
-	void Update () {
-        
-	}
 
-    protected void MortalUpdate()
+    protected virtual void Update()
     {
         energy = Mathf.Clamp(energy, -10, maxEnergy);
         energyBar.anchoredPosition = new Vector3(minX + ((energy / maxEnergy) * energyBar.rect.width), cachedY);
+		dead = energy <= 0;
     }
 
     public void TakeDamage(float amt)

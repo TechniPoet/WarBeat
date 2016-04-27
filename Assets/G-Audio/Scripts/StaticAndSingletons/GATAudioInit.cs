@@ -3,6 +3,7 @@
 // Copyright © 2014 Gregorio Zanon
 //--------------------------------
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 namespace GAudio
@@ -74,7 +75,7 @@ namespace GAudio
 				yield return Application.RequestUserAuthorization( UserAuthorization.Microphone );
 				if (Application.HasUserAuthorization( UserAuthorization.Microphone ) ) 
 				{
-					Application.LoadLevel( levelToLoad );
+					SceneManager.LoadScene(levelToLoad);
 				} 
 				else 
 				{
@@ -83,7 +84,7 @@ namespace GAudio
 			}
 			else
 			{
-				Application.LoadLevel( levelToLoad );
+				SceneManager.LoadScene(levelToLoad);
 			}
 		}
 		

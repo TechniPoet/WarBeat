@@ -1,22 +1,38 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class BulletScript : MonoBehaviour {
 
     float speed;
     Vector2 dir;
     int teamNum;
-    public float damage = 34;
-    float life;
+	//float energyPerUnit = 5;
+    public float energy = 34;
 	public bool dead = false;
+	static int cnt = 0;
+	public int id;
+	public List<int> idSeen;
 
-    public void Setup(float newSpeed, Vector2 newDir, int newTeam, float newLife)
+    public void Setup(float newSpeed, Vector2 newDir, int newTeam, float newEnergy)
     {
-        life = newLife;
+		cnt++;
+		id = cnt;
+		idSeen = new List<int>();
+
+		energy = newEnergy * 1.2f;
         speed = newSpeed;
         dir = newDir;
         teamNum = newTeam;
         this.gameObject.SetActive(true);
+		switch (teamNum)
+		{
+			case 0:
+				GetComponent<SpriteRenderer>().color = Color.blue;
+				break;
+			case 1:
+				GetComponent<SpriteRenderer>().color = Color.red;
+				break;
+		}
     }
 
 	// Use this for initialization
@@ -27,21 +43,30 @@ public class BulletScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         transform.position = new Vector2(transform.position.x, transform.position.y) + (dir * speed * Time.deltaTime);
-        life -= Time.deltaTime;
-        if (life <= 0 || damage <= 0)
+        //energy -= energyPerUnit * (Mathf.Abs((dir * speed * Time.deltaTime).magnitude) / ArenaGrid.GridUnitSize() );
+        if (energy <= 0)
         {
 			dead = true;
         }
+		else
+		{
+			transform.localScale = new Vector3(energy/30, energy/30, 1);
+		}
+		
 	}
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        switch (col.gameObject.tag)
+		if (col.gameObject.GetComponent<Mortal>()==null && col.gameObject.GetComponent<BulletScript>() == null) {
+			return;
+		}
+
+		switch (col.gameObject.tag)
         {
             case GameManager.UnitTag:
                 if (col.gameObject.GetComponent<Mortal>().team != teamNum)
                 {
-                    col.gameObject.GetComponent<Mortal>().TakeDamage(damage);
+                    col.gameObject.GetComponent<Mortal>().TakeDamage(energy);
                     this.Destroy();
                 }
 				else
@@ -52,20 +77,25 @@ public class BulletScript : MonoBehaviour {
             case GameManager.StatueTag:
                 if (col.gameObject.GetComponent<Mortal>().team != teamNum)
                 {
-                    col.gameObject.GetComponent<Mortal>().TakeDamage(damage);
+                    col.gameObject.GetComponent<Mortal>().TakeDamage(energy);
                     this.Destroy();
                 }
                 break;
             case "Bad":
 				BulletScript bul = col.gameObject.GetComponent<BulletScript>();
-
-				if (bul.teamNum != teamNum)
-                {
-					float oldDmg = bul.GetDamage();
-					bul.TakeDamage(damage);
-					TakeDamage(oldDmg);
-                }
-                break;
+				if (!idSeen.Contains(bul.id))
+				{
+					if (bul.teamNum != teamNum)
+					{
+						float oldDmg = bul.GetDamage();
+						bul.TakeDamage(energy);
+						this.TakeDamage(oldDmg);
+					}
+					bul.idSeen.Add(id);
+				}
+				
+				Physics2D.IgnoreCollision(GetComponent<Collider2D>(), col.collider);
+				break;
             default:
 				this.Destroy();
                 break;
@@ -82,12 +112,12 @@ public class BulletScript : MonoBehaviour {
 
     public float GetDamage()
     {
-        return damage;
+        return energy;
     }
 
 	public void TakeDamage(float dmg)
 	{
-		damage -= dmg;
+		energy -= Mathf.Abs(dmg);
 	}
 
     public void Destroy()

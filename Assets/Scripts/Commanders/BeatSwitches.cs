@@ -2,36 +2,39 @@
 using UnityEngine.UI;
 using System.Collections;
 using UIWidgets;
+using PuppetType = ConstFile.PuppetType;
 
 public class BeatSwitches : MonoBehaviour {
 
     public int team = 0;
     public int beat;
+	[SerializeField]
+	public PuppetType type;
     public Image beatImage;
-    public Switch restSwitch;
-    public Switch attackSwitch;
-    public Switch moveSwitch;
+    public Switch neutralSwitch;
+    public Switch defensiveSwitch;
+    public Switch aggressiveSwitch;
     float waitTime = .6f;
 
-    public delegate void switchedEvent(int team, int beat, UnitScript.Strategies action);
+    public delegate void switchedEvent(int team, int beat, UnitScript.Strategies action, PuppetType type);
     public event switchedEvent SwitchChanged;
 
     [System.NonSerialized]
-    public bool rest;
+    public bool neutral;
     [System.NonSerialized]
-    public bool attack;
+    public bool defensive;
     [System.NonSerialized]
-    public bool move;
+    public bool aggressive;
 
 	// Use this for initialization
 	void Awake ()
     {
-        rest = true;
-        attack = false;
-        move = false;
-        restSwitch.OnValueChanged.AddListener(RestChange);
-        attackSwitch.OnValueChanged.AddListener(AttackChange);
-        moveSwitch.OnValueChanged.AddListener(MoveChange);
+        neutral = true;
+        defensive = false;
+        aggressive = false;
+        neutralSwitch.OnValueChanged.AddListener(RestChange);
+        defensiveSwitch.OnValueChanged.AddListener(AttackChange);
+        aggressiveSwitch.OnValueChanged.AddListener(MoveChange);
 	}
 	
 	// Update is called once per frame
@@ -41,40 +44,40 @@ public class BeatSwitches : MonoBehaviour {
 
     void UpdateSwitches()
     {
-        restSwitch.IsOn = rest;
-        attackSwitch.IsOn = attack;
-        moveSwitch.IsOn = move;
+        neutralSwitch.IsOn = neutral;
+        defensiveSwitch.IsOn = defensive;
+        aggressiveSwitch.IsOn = aggressive;
     }
 
     void RestChange(bool newVal)
     {
         StartCoroutine(WaitAfterAnimation());
-        if (rest && !attack && !move)
+        if (neutral && !defensive && !aggressive)
         {
-            restSwitch.IsOn = true;
+            neutralSwitch.IsOn = true;
         }
         else
         {
-            rest = true;
-            attack = false;
-            move = false;
-            SwitchChanged(team, beat, UnitScript.Strategies.NEUTRAL);
+            neutral = true;
+            defensive = false;
+            aggressive = false;
+            SwitchChanged(team, beat, UnitScript.Strategies.NEUTRAL, type);
         }
         UpdateSwitches();
     }
     IEnumerator WaitRestChange()
     {
         yield return new WaitForSeconds(waitTime);
-        if (rest && !attack && !move)
+        if (neutral && !defensive && !aggressive)
         {
-            restSwitch.IsOn = true;
+            neutralSwitch.IsOn = true;
         }
         else
         {
-            rest = true;
-            attack = false;
-            move = false;
-            SwitchChanged(team, beat, UnitScript.Strategies.NEUTRAL);
+            neutral = true;
+            defensive = false;
+            aggressive = false;
+            SwitchChanged(team, beat, UnitScript.Strategies.NEUTRAL, type);
         }
         UpdateSwitches();
     }
@@ -82,16 +85,16 @@ public class BeatSwitches : MonoBehaviour {
     void AttackChange(bool newVal)
     {
         StartCoroutine(WaitAfterAnimation());
-        if (!rest && attack && !move)
+        if (!neutral && defensive && !aggressive)
         {
-            attackSwitch.IsOn = true;
+            defensiveSwitch.IsOn = true;
         }
         else
         {
-            rest = false;
-            attack = true;
-            move = false;
-            SwitchChanged(team, beat, UnitScript.Strategies.DEFENSIVE);
+            neutral = false;
+            defensive = true;
+            aggressive = false;
+            SwitchChanged(team, beat, UnitScript.Strategies.DEFENSIVE, type);
         }
         UpdateSwitches();
     }
@@ -99,16 +102,16 @@ public class BeatSwitches : MonoBehaviour {
     IEnumerator WaitAttackChange()
     {
         yield return new WaitForSeconds(waitTime);
-        if (!rest && attack && !move)
+        if (!neutral && defensive && !aggressive)
         {
-            attackSwitch.IsOn = true;
+            defensiveSwitch.IsOn = true;
         }
         else
         {
-            rest = false;
-            attack = true;
-            move = false;
-            SwitchChanged(team, beat, UnitScript.Strategies.DEFENSIVE);
+            neutral = false;
+            defensive = true;
+            aggressive = false;
+            SwitchChanged(team, beat, UnitScript.Strategies.DEFENSIVE, type);
         }
         UpdateSwitches();
     }
@@ -116,16 +119,16 @@ public class BeatSwitches : MonoBehaviour {
     void MoveChange(bool newVal)
     {
         StartCoroutine(WaitAfterAnimation());
-        if (!rest && !attack && move)
+        if (!neutral && !defensive && aggressive)
         {
-            moveSwitch.IsOn = true;
+            aggressiveSwitch.IsOn = true;
         }
         else
         {
-            rest = false;
-            attack = false;
-            move = true;
-            SwitchChanged(team, beat, UnitScript.Strategies.AGGRESSIVE);
+            neutral = false;
+            defensive = false;
+            aggressive = true;
+            SwitchChanged(team, beat, UnitScript.Strategies.AGGRESSIVE, type);
         }
         UpdateSwitches();
     }
@@ -133,28 +136,28 @@ public class BeatSwitches : MonoBehaviour {
     IEnumerator WaitMoveChange()
     {
         yield return new WaitForSeconds(waitTime);
-        if (!rest && !attack && move)
+        if (!neutral && !defensive && aggressive)
         {
-            moveSwitch.IsOn = true;
+            aggressiveSwitch.IsOn = true;
         }
         else
         {
-            rest = false;
-            attack = false;
-            move = true;
-            SwitchChanged(team, beat, UnitScript.Strategies.AGGRESSIVE);
+            neutral = false;
+            defensive = false;
+            aggressive = true;
+            SwitchChanged(team, beat, UnitScript.Strategies.AGGRESSIVE, type);
         }
         UpdateSwitches();
     }
 
     IEnumerator WaitAfterAnimation()
     {
-        restSwitch.OnValueChanged.RemoveListener(RestChange);
-        attackSwitch.OnValueChanged.RemoveListener(AttackChange);
-        moveSwitch.OnValueChanged.RemoveListener(MoveChange);
+        neutralSwitch.OnValueChanged.RemoveListener(RestChange);
+        defensiveSwitch.OnValueChanged.RemoveListener(AttackChange);
+        aggressiveSwitch.OnValueChanged.RemoveListener(MoveChange);
         yield return new WaitForSeconds(.3f);
-        restSwitch.OnValueChanged.AddListener(RestChange);
-        attackSwitch.OnValueChanged.AddListener(AttackChange);
-        moveSwitch.OnValueChanged.AddListener(MoveChange);
+        neutralSwitch.OnValueChanged.AddListener(RestChange);
+        defensiveSwitch.OnValueChanged.AddListener(AttackChange);
+        aggressiveSwitch.OnValueChanged.AddListener(MoveChange);
     }
 }

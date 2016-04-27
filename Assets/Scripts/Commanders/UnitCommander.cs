@@ -2,129 +2,129 @@
 using System.Collections.Generic;
 using GAudio;
 using System;
+using PuppetType = ConstFile.PuppetType;
 
-public class UnitCommander : MonoBehaviour, IGATPulseClient
+public class UnitCommander : MonoBehaviour
 {
-
-    PulseModule pulse;
     public BeatSwitches[] switches;
-    UnitScript.Strategies[] actionPatternZero = new UnitScript.Strategies[8];
-    UnitScript.Strategies[] actionPatternOne = new UnitScript.Strategies[8];
-    bool init = false;
+    UnitScript.Strategies[] actionPatternZeroBass = new UnitScript.Strategies[1];
+	UnitScript.Strategies[] actionPatternZeroTreble = new UnitScript.Strategies[1];
+	UnitScript.Strategies[] actionPatternOneBass = new UnitScript.Strategies[1] { UnitScript.Strategies.AGGRESSIVE };
+	UnitScript.Strategies[] actionPatternOneTreble = new UnitScript.Strategies[1] { UnitScript.Strategies.AGGRESSIVE};
+	//bool init = false;
 
     // Use this for initialization
     void Awake()
     {
-        if (MusicManager._Pulse != null)
+        foreach (BeatSwitches b in switches)
         {
-            pulse = MusicManager._Pulse;
-            pulse.SubscribeToPulse(this);
-            foreach (BeatSwitches b in switches)
-            {
-                b.SwitchChanged += ActionChange;
-            }
-            foreach (UnitScript u in MusicManager.units)
-            {
-                actionPatternZero = u.actionPattern;
-                actionPatternOne = u.actionPattern;
-            }
-            init = true;
+            b.SwitchChanged += ActionChange;
         }
-        else
-        {
-            init = false;
-        }
-    }
-
-    void OnDisable()
-    {
-        //pulse.UnsubscribeToPulse(this);
-    }
+		UpdateBassUnits(0);
+		UpdateBassUnits(1);
+		UpdateTrebleUnits(0);
+		UpdateTrebleUnits(1);
+		GameManager.AddUnit += NewUnit;
+	}
 
 
     // Update is called once per frame
     void Update()
     {
-        if (!init && MusicManager._Pulse != null)
-        {
-            pulse = MusicManager._Pulse;
-            pulse.SubscribeToPulse(this);
-            foreach (BeatSwitches b in switches)
-            {
-                b.SwitchChanged += ActionChange;
-            }
-            foreach (UnitScript u in MusicManager.units)
-            {
-                actionPatternZero = u.actionPattern;
-                actionPatternOne = u.actionPattern;
-            }
-            init = true;
-        }
+	}
 
-        foreach (UnitScript u in MusicManager.units)
-        {
-            switch (u.team)
-            {
-                case 0:
-                    u.actionPattern = actionPatternZero;
-                    
-                    break;
-                case 1:
-                    break;
-            }
-        }
-    }
+	void NewUnit(int team, GameObject unit, PuppetType type)
+	{
+		UpdateBassUnits(team);
+		UpdateTrebleUnits(team);
+	}
 
-    public void OnPulse(IGATPulseInfo pulseInfo)
-    {
-        foreach (BeatSwitches b in switches)
-        {
-            if (pulseInfo.StepIndex == b.beat)
-            {
-                b.beatImage.enabled = true;
-            }
-            else
-            {
-                b.beatImage.enabled = false;
-            }
-        }
-    }
+	void ActionChange(int team, int beatNum, UnitScript.Strategies newAction, PuppetType type)
+	{
+		//Debug.Log(string.Format("Action Change\nTeam: {0}\nBeatNum: {1}\nAction: {2}",team,beatNum,newAction));
+		switch (team)
+		{
+			case 0:
+				switch (type)
+				{
+					case PuppetType.BASS:
+						actionPatternZeroBass[0] = newAction;
+						break;
+					case PuppetType.TREBLE:
+						actionPatternZeroTreble[0] = newAction;
+						break;
+				}
+				break;
+			case 1:
+				switch (type)
+				{
+					case PuppetType.BASS:
+						actionPatternOneBass[0] = newAction;
+						break;
+					case PuppetType.TREBLE:
+						actionPatternOneTreble[0] = newAction;
+						break;
+				}
+				break;
+		}
+		switch (type)
+		{
+			case PuppetType.BASS:
+				UpdateBassUnits(team);
+				break;
+			case PuppetType.TREBLE:
+				UpdateTrebleUnits(team);
+				break;
+		}
+	}
 
-    public void PulseStepsDidChange(bool[] newSteps)
-    {
-        throw new NotImplementedException();
-    }
+	void UpdateBassUnits(int team)
+	{
+		switch (team)
+		{
+			case 0:
+				for (int i = 0; i < GameManager._LeftUnitBass.Count; i++)
+				{
+					if (GameManager._LeftUnitBass[i] != null)
+					{
+						GameManager._LeftUnitBass[i].UpdateActionPattern(actionPatternZeroBass[0]);
+					}
+					
+				}
+				break;
+			case 1:
+				for (int i = 0; i < GameManager._RightUnitBass.Count; i++)
+				{
+					if (GameManager._RightUnitBass[i] != null)
+					{
+						GameManager._RightUnitBass[i].UpdateActionPattern(actionPatternOneBass[0]);
+					}
+					
+				}
+				break;
+		}
+	}
 
-    void ActionChange(int team, int beatNum, UnitScript.Strategies newAction)
-    {
-        //Debug.Log(string.Format("Action Change\nTeam: {0}\nBeatNum: {1}\nAction: {2}",team,beatNum,newAction));
-        switch (team)
-        {
-            case 0:
-                actionPatternZero[beatNum] = newAction;
-                break;
-            case 1:
-                actionPatternOne[beatNum] = newAction;
-                break;
-        }
-        
-        foreach (UnitScript u in MusicManager.units)
-        {
-            switch (team)
-            {
-                case 0:
-                    if (u.team == 0)
-                    {
-                        u.actionPattern = actionPatternZero;
-                    }
-                    break;
-                case 1:
-                    if (u.team == 1)
-                    {
-                        u.actionPattern = actionPatternOne;
-                    }
-                    break;
-            }
-        }
-    }
+	void UpdateTrebleUnits(int team)
+	{
+		switch (team)
+		{
+			case 0:
+				for (int i = 0; i < GameManager._LeftUnitTreble.Count; i++)
+				{
+					UnitScript u = GameManager._LeftUnitTreble[i];
+					u.UpdateActionPattern(actionPatternZeroTreble[0]);
+				}
+				break;
+			case 1:
+				for (int i = 0; i < GameManager._RightTreble.Count; i++)
+				{
+					if (GameManager._RightUnitTreble[i] != null)
+					{
+						GameManager._RightUnitTreble[i].UpdateActionPattern(actionPatternOneTreble[0]);
+					}
+				}
+				break;
+		}
+	}
 }

@@ -3,15 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using GAudio;
 using System;
+using Actions = ConstFile.Actions;
+using CondOptions = ConstFile.ConditionOptions;
 
-public abstract class UnitScript : Mortal, IGATPulseClient
+
+
+
+[SelectionBase]
+public abstract class UnitScript : Puppet, IGATPulseClient
 {
-	public enum UnitType
-	{
-		BASS,
-		TREBLE,
-	}
-	public UnitType currType;
+	#region Variables
+	
     public enum Strategies
     {
         NEUTRAL,
@@ -19,25 +21,42 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         DEFENSIVE,
     }
 
-	public enum Actions
-	{
-		ATTACK,
-		REST,
-		MOVE
-	}
-	public Actions currAction;
+	protected List<ConditionalItem> neutralAI;
+	protected List<ConditionalItem> aggressiveAI;
+	protected List<ConditionalItem> defensiveAI;
+	Vector3 backMovementMod;
     public Strategies[] actionPattern;
     public Transform mainTarget;
     
 
     protected Vector3 spawnPos;
-    protected List<GameObject> enemyList;
 
     protected Vector2 goalPos;
     protected Vector2 currTarget;
 
+	protected int NoteMult
+	{
+		get
+		{
+			switch(currNote)
+			{
+				case ConstFile.Notes.SIXTEENTH:
+					return 1;
+				case ConstFile.Notes.EIGHTH:
+					return 2;
+				case ConstFile.Notes.QUARTER:
+					return 4;
+				case ConstFile.Notes.HALF:
+					return 8;
+				case ConstFile.Notes.WHOLE:
+					return 16;
+				
+				default:
+					return 1;
+			}
+		}
+	}
     // pulse variables
-    protected PulseModule pulse;
     protected int curr_beat = 0;
     //Move Variables
     protected float moveCost;
@@ -50,26 +69,17 @@ public abstract class UnitScript : Mortal, IGATPulseClient
     protected float lastPulseTime = 0;
     protected float deltaPulseTime = 0;
 
-    #region Pulse Methods
-    void IGATPulseClient.OnPulse(IGATPulseInfo pulseInfo)
+	
+
+
+	#endregion
+
+
+	#region Pulse Methods
+	void IGATPulseClient.OnPulse(IGATPulseInfo pulseInfo)
     {
         // Upkeep Tasks.
-        PulseTimer(); // Manage pulse time.
         curr_beat = pulseInfo.StepIndex;
-
-        // Action handle.
-        switch (actionPattern[curr_beat])
-        {
-            case Strategies.AGGRESSIVE:
-                AggressiveStrat();
-                break;
-            case Strategies.DEFENSIVE:
-                DefensiveStrat();
-                break;
-            case Strategies.NEUTRAL:
-                NeutralStrat();
-                break;
-        }
     }
 
     void IGATPulseClient.PulseStepsDidChange(bool[] newSteps)
@@ -79,53 +89,96 @@ public abstract class UnitScript : Mortal, IGATPulseClient
 
     #endregion
 
-    #region House Keeping
 
-    protected void PulseTimer()
-    {
-        deltaPulseTime = Time.time - lastPulseTime;
-        lastPulseTime = Time.time;
-    }
+    
 
-    protected void EnemyAdd(int eTeam, ref GameObject enemy)
-    {
-        if (eTeam != this.team)
-        {
-            enemyList.Add(enemy);
-        }
-    }
+	#region Strategies
 
-    protected void EnemyRemove(int eTeam, ref GameObject enemy)
-    {
-        if (eTeam != this.team)
-        {
-            enemyList.Remove(enemy);
-        }
-    }
+	protected void Strat(List<ConditionalItem> AI)
+	{
+		bool actionMade = false;
+		for (int i = 0; i < AI.Count; i++)
+		{
+			ConditionalItem decision = AI[i];
+			actionMade = ActionDecision(decision);
+			if (actionMade)
+			{
+				break;
+			}
+		}
+		if (!actionMade)
+		{
+			currAction = Actions.REST;
+			currNote = ConstFile.Notes.EIGHTH;
+		}
+		DebugPanel.Log("Qued Action", "Unit" + id, string.Format("{0}:{1} | {2}", Time.time, currAction, currNote));
+	}
 
-    #endregion
+	bool ActionDecision(ConditionalItem decision)
+	{
+		bool actionMade = false;
+		if (ValidAction(decision))
+		{
+			switch (decision.action)
+			{
+				case Actions.ATTACK:
+					currTarget = enemyList[0].transform.position;
+					break;
+				case Actions.MOVE_BACK:
+					currTarget = this.transform.position + backMovementMod;
+					break;
+				case Actions.MOVE_FORWARD:
+					currTarget = this.transform.position + -backMovementMod;
+					break;
+				case Actions.MOVE_ENEMY:
+					currTarget = enemyList[0].transform.position;
+					break;
+				case Actions.REST:
+					break;
+			}
+			actionMade = true;
+			currNote = decision.note;
+			currAction = decision.action;
+		}
+		return actionMade;
+	}
 
-    #region Abstract Methods
 
-    protected abstract void Attack();
+	public override void MakeMove(PlayInstructs instruct)
+	{
+		base.MakeMove(instruct);
+		currNote = instruct.note;
+		switch (instruct.action)
+		{
+			case Actions.ATTACK:
+				Attack();
+				break;
+			case Actions.MOVE_BACK:
+				MoveTowards(currTarget);
+				break;
+			case Actions.MOVE_FORWARD:
+				MoveTowards(currTarget);
+				break;
+			case Actions.MOVE_ENEMY:
+				MoveTowards(currTarget);
+				break;
+			case Actions.REST:
+				Rest();
+				break;
+		}
+	}
 
-    protected abstract void NeutralStrat();
+	#endregion
 
-    protected abstract void AggressiveStrat();
-
-    protected abstract void DefensiveStrat();
-
-    #endregion
-
-    public void UnitSetup(int newTeam, GameObject target, float newMaxE,
+	public void Setup(int newTeam, GameObject target, float newMaxE,
         float newStartE, float newGainRate, float newMoveCost, float newAtkCost,
         float newMoveSpeed, float newAtkSpeed, float newAtkLifeSpan)
     {
-        team = newTeam;
+		base.Setup(newTeam);
         mainTarget = target.transform;
         energy = newStartE;
         maxEnergy = newStartE;
-        gainRate = newGainRate;
+        
         lastPulseTime = Time.time;
         moveSpeed = newMoveSpeed;
         attackSpeed = newAtkSpeed;
@@ -135,63 +188,189 @@ public abstract class UnitScript : Mortal, IGATPulseClient
         goalPos = new Vector2(mainTarget.position.x, transform.position.y);
         spawnPos = this.transform.position;
 
+		
         enemyList = team == 0 ? GameManager._RightUnits : GameManager._LeftUnits;
-        enemyList.Add(mainTarget.gameObject);
-
-        //Subscriptions
-        pulse = MusicManager._Pulse;
-        pulse.SubscribeToPulse(this);
+        //enemyList.Add(mainTarget.gameObject);
+		
         MusicManager.units.Add(this);
         GameManager.AddUnit += EnemyAdd;
         GameManager.RemoveUnit += EnemyRemove;
 
-        // Set color
-        switch (team)
+		
+
+		// Set color
+		switch (team)
         {
             case 0:
 				GetComponentInChildren<SpriteRenderer>().color = Color.blue;
-                break;
+				gainRate = newGainRate;
+				backMovementMod = new Vector3(-100, 0, 0);
+				break;
             case 1:
 				GetComponentInChildren<SpriteRenderer>().color = Color.red;
-				actionPattern = new Strategies[8] {Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.DEFENSIVE, Strategies.DEFENSIVE,
-				Strategies.AGGRESSIVE, Strategies.NEUTRAL,Strategies.AGGRESSIVE, Strategies.DEFENSIVE};
-                break;
+				actionPattern = new Strategies[] {Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE, Strategies.AGGRESSIVE};
+				gainRate = newGainRate/2;
+				backMovementMod = new Vector3(100, 0, 0);
+				whole.transform.Rotate(Vector3.forward, 180);
+				half.transform.Rotate(Vector3.forward, 180);
+				quarter.transform.Rotate(Vector3.forward, 180);
+				eigth.transform.Rotate(Vector3.forward, 180);
+				sixteenth.transform.Rotate(Vector3.forward, 180);
+
+				break;
         }
+
+		
+		
     }
-	
-	// Update is called once per frame
-	protected void Update () {
-        MortalUpdate();
-        DeathMethod();
-        enemyList.Sort((x, y) => CalcUtil.DistCompare(this.gameObject, x, y));
-        currTarget = enemyList[0].transform.position;
-    }
+
 
     protected void MoveTowards(Vector2 tar)
     {
-        TakeDamage(moveCost);
         Vector2 moveDir = tar - new Vector2(transform.position.x, transform.position.y);
         moveDir.Normalize();
-        transform.position = new Vector2(transform.position.x, transform.position.y) + (moveDir * moveSpeed /* Time.deltaTime*/);
-		currAction = Actions.MOVE;
-    }
+		ConstFile.Direction dir = MathUtil.MoveDir(moveDir);
+		Vector2 temp = (ConstFile.DirectionVectors[(int)dir] * moveSpeed * NoteMult) + gridLocation;
+		if (!ArenaGrid.ValidGridPos(temp, id))
+		{
+			Rest();
+			return;
+		}
+		gridLocation = temp;
+		try {
+			transform.position = ArenaGrid.GridToWorldPos(gridLocation);
+			TakeDamage(moveCost * NoteMult);
+		}
+		catch (System.Exception e)
+		{
+			Debug.LogError(id+" Exception!! " + e);
+		}
+        
+	}
 
-    protected void Rest()
+    protected override void Rest()
     {
-        energy += gainRate;
 		currAction = Actions.REST;
+		energy += gainRate * NoteMult;
     }
 
-    protected void DeathMethod()
+    protected override void DeathMethod()
     {
-        if (energy <= 0)
-        {
-            MusicManager.units.Remove((UnitScript)this);
-            GameManager.RemoveDeadUnit(team, this.gameObject);
-            pulse.UnsubscribeToPulse(this);
-            Destroy(this.gameObject);
-        }
+		if (dead)
+		{
+			MusicManager.units.Remove((UnitScript)this);
+			
+			
+		}
+		base.DeathMethod();
     }
+	/*
+	void OnDestroy()
+	{
+		
+		if (this.enabled)
+		{
+			DebugPanel.Log("OnDestroyEnabled", "Unit" + id, "uh oh");
+			DebugPanel.Log("Dead", "Unit" + id, string.Format("{0}: {1}", Time.time, true));
+			GameManager.AddUnit -= EnemyAdd;
+			GameManager.RemoveUnit -= EnemyRemove;
+			MusicManager.units.Remove((UnitScript)this);
+			GameManager.RemoveDeadUnit(team, this.gameObject, currType);
+		}
+	}
 
+	void OnDisable()
+	{
+		DebugPanel.Log("Dead", "Unit" + id, string.Format("{0}: {1}", Time.time, true));
+		GameManager.AddUnit -= EnemyAdd;
+		GameManager.RemoveUnit -= EnemyRemove;
+		MusicManager.units.Remove((UnitScript)this);
+		GameManager.RemoveDeadUnit(team, this.gameObject, currType);
+	}
+	*/
+	protected bool ValidAction(ConditionalItem item)
+	{
+		float firstVal = 0, secondVal = 0;
+
+		switch (item.cond1Ind)
+		{
+			case CondOptions.ENEMY_DISTANCE:
+				if (enemyList.Count > 0)
+				{
+					firstVal = ArenaGrid.GridDistance(this.transform.position, enemyList[0].transform.position);
+				}
+				else
+				{
+					firstVal = float.MaxValue;
+				}
+				break;
+			case CondOptions.ENERGY:
+				firstVal = energy;
+				break;
+			case CondOptions.VALUE:
+				firstVal = item.cond1Val;
+				break;
+		}
+
+		switch (item.cond2Ind)
+		{
+			case CondOptions.ENEMY_DISTANCE:
+				if (enemyList.Count > 0)
+				{
+					secondVal = ArenaGrid.GridDistance(this.transform.position, enemyList[0].transform.position);
+				}
+				else
+				{
+					secondVal = float.MaxValue;
+				}
+				break;
+			case CondOptions.ENERGY:
+				secondVal = energy;
+				break;
+			case CondOptions.VALUE:
+				secondVal = item.cond2Val;
+				break;
+		}
+
+		bool retVal = item.greater ? firstVal > secondVal : firstVal < secondVal;
+
+		return retVal;
+	}
+
+	public void UpdateActionPattern(Strategies strat)
+	{
+		actionPattern[0] = strat;
+	}
     
+	public override PlayInstructs CurrInstruction()
+	{
+		base.CurrInstruction();
+		if (enemyList.Count > 0)
+		{
+			SortEnemyList();
+			while (enemyList[0] == null && enemyList.Count > 0)
+			{
+				enemyList.RemoveAt(0);
+			}
+			if (enemyList.Count > 0)
+			{
+				currTarget = enemyList[0].transform.position;
+			}
+		} 
+		
+		switch (actionPattern[0])
+		{
+			case Strategies.AGGRESSIVE:
+				Strat(aggressiveAI);
+				break;
+			case Strategies.DEFENSIVE:
+				Strat(defensiveAI);
+				break;
+			case Strategies.NEUTRAL:
+				Strat(neutralAI);
+				break;
+		}
+		SetNote();
+		return new PlayInstructs(currAction, currNote, transform.position.y, this);
+	}
 }

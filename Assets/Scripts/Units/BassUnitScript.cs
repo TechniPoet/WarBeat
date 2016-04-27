@@ -1,91 +1,54 @@
 ﻿using UnityEngine;
-using UnityEditor;
-using System.Collections;
-using System;
+using System.Collections.Generic;
+using Actions = ConstFile.Actions;
+using PuppetType = ConstFile.PuppetType;
 
+[SelectionBase]
 public class BassUnitScript : UnitScript
 {
-
 	public GameObject bullet;
-
+	
 	float aggrAtkDist;
 	float defAtkDist;
-
+	
 
 	public void BassSetup(int newTeam, GameObject target, float newMaxE,
 		float newStartE, float newGainRate, float newMoveCost, float newAtkCost,
 		float newMoveSpeed, float newAtkSpeed, float newAtkLifeSpan)
 	{
-		UnitSetup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
+		Setup(newTeam, target, newMaxE, newStartE, newGainRate, newMoveCost, newAtkCost,
 		newMoveSpeed, newAtkSpeed, newAtkLifeSpan);
-		currType = UnitType.BASS;
-	}
-
-
-	#region Strategies
-
-	protected override void NeutralStrat()
-	{
-		Rest();
-	}
-
-	protected override void AggressiveStrat()
-	{
-		for (int i = 0; i < enemyList.Count; i++)
+		currType = PuppetType.BASS;
+		AIManager.UnitAIs u;
+		if (team == 0)
 		{
-			int front = team == 0 ? 1 : -1;
-			if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._BUnit.aggrAtkDist && ((enemyList[i].transform.position.x - transform.position.x) * front) > 0)
-			{
-				currTarget = enemyList[i].transform.position;
-				Attack();
-				return;
-			}
+			u = AIManager.BassUnit;
 		}
-		if (energy < .5f * maxEnergy)
+		else
 		{
-			Rest();
-			return;
+			u = AIManager.EnemyBassUnit;
 		}
-		MoveTowards(mainTarget.position);
+		neutralAI = u.NeutralAI;
+		aggressiveAI = u.AggressiveAI;
+		defensiveAI = u.DefensiveAI;
 	}
 
-	protected override void DefensiveStrat()
-	{
-		for (int i = 0; i < enemyList.Count; i++)
-		{
-			int front = team == 0 ? 1 : -1;
-			if (Vector3.Distance(transform.position, enemyList[i].transform.position) < GameManager._BUnit.defAtkDist)
-			{
-				currTarget = enemyList[i].transform.position;
-				Attack();
-				return;
-			}
-		}
-		Rest();
-		//MoveTowards(spawnPos);
-	}
 
-	#endregion
+
 
 	protected override void Attack()
 	{
 		Vector2 atkDir = currTarget - new Vector2(transform.position.x, transform.position.y);
 		atkDir.Normalize();
-		atkDir *= .5f;
-		Vector2 spawnPos = new Vector2(transform.position.x, transform.position.y) + atkDir;
+		Vector2 spawnPos = new Vector2(transform.position.x, transform.position.y);
 		GameObject newBul = Instantiate(bullet, spawnPos, Quaternion.identity) as GameObject;
-		newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkLife);
-		TakeDamage(atkCost);
+		newBul.GetComponent<BulletScript>().Setup(attackSpeed, atkDir, team, atkCost * NoteMult);
+		TakeDamage(atkCost * NoteMult);
 		currAction = Actions.ATTACK;
 	}
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
 	// Update is called once per frame
-	public new void Update () {
+	protected override void Update () {
 		base.Update();
 		DebugExtension.DebugCircle(transform.position, Vector3.forward, GameManager._BUnit.aggrAtkDist);
 	}

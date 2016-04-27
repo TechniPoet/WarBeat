@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using GM = GameManager;
+using PuppetType = ConstFile.PuppetType;
 
 public class SpawnMaster : MonoBehaviour {
     bool init = false;
@@ -50,24 +51,22 @@ public class SpawnMaster : MonoBehaviour {
 	{
 		Vector2 spawnPoint;
 		GameObject attackBase;
-		GameObject hBase;
 		switch (team)
 		{
 			case 0:
 				spawnPoint = GM._LTeam.baseScript.spawner.position;
 				attackBase = rightBase;
-				hBase = leftBase;
+				GM._LTeam.triggerScript.TakeDamage(GM._TUnit.spawnCost);
 				break;
 			case 1:
 				spawnPoint = GM._RTeam.baseScript.spawner.position;
 				attackBase = leftBase;
-				hBase = rightBase;
+				GM._RTeam.triggerScript.TakeDamage(GM._TUnit.spawnCost);
 				break;
 			default:
 				return;
 		}
-
-		hBase.GetComponent<StatueScript>().energy -= GM._TUnit.spawnCost;
+		
 		GameObject newUnit = Instantiate(tUnit, spawnPoint, Quaternion.identity) as GameObject;
 
 		TrebleUnit u = GM._TUnit;
@@ -81,7 +80,7 @@ public class SpawnMaster : MonoBehaviour {
 			newUnit.transform.Rotate(new Vector3(0,0, 180));
 		}
 
-		GM.AddNewUnit(team, ref newUnit);
+		GM.AddNewUnit(team, newUnit, PuppetType.TREBLE);
 	}
 
 
@@ -89,29 +88,26 @@ public class SpawnMaster : MonoBehaviour {
 	{
 		Vector2 spawnPoint;
 		GameObject attackBase;
-		GameObject hBase;
-
 		switch (team)
 		{
 			case 0:
 				spawnPoint = GM._LTeam.baseScript.spawner.position;
 				attackBase = rightBase;
-				hBase = leftBase;
+				GM._LTeam.triggerScript.TakeDamage(GM._BUnit.spawnCost);
 				break;
 			case 1:
 				spawnPoint = GM._RTeam.baseScript.spawner.position;
 				attackBase = leftBase;
-				hBase = rightBase;
+				GM._RTeam.triggerScript.TakeDamage(GM._BUnit.spawnCost);
 				break;
 			default:
 				return;
 		}
-
-		hBase.GetComponent<StatueScript>().energy -= GM._BUnit.spawnCost;
+		
 		GameObject newUnit = Instantiate(bUnit, spawnPoint, Quaternion.identity) as GameObject;
 
 		BassUnit u = GM._BUnit;
-		newUnit.GetComponent<BassUnitScript>().UnitSetup(team, attackBase, u.maxEnergy, u.startEnergy,
+		newUnit.GetComponent<BassUnitScript>().BassSetup(team, attackBase, u.maxEnergy, u.startEnergy,
 			u.gainEnergyRate, u.moveCost, u.eigthAtkCost, u.moveSpeed, u.atkSpeed,
 			u.atkLifeSpan);
 		newUnit.SetActive(true);
@@ -121,6 +117,6 @@ public class SpawnMaster : MonoBehaviour {
 			newUnit.transform.Rotate(new Vector3(0, 0, 180));
 		}
 
-		GM.AddNewUnit(team, ref newUnit);
+		GM.AddNewUnit(team, newUnit, PuppetType.BASS);
 	}
 }
