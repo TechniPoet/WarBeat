@@ -35,6 +35,38 @@ public class ArenaGrid : UnitySingleton<ArenaGrid>
 
 	//private int currLines = 0;
 	
+	void Awake()
+	{
+		MusicManager.Beat += HitBeat;
+	}
+
+	void HitBeat(int ind)
+	{
+		if (ind == 7)
+		{
+			leftPlayHeads[ind].GetComponent<SpriteRenderer>().color = Color.magenta;
+			for (int i = 0; i < leftPlayHeads.Count; i++)
+			{
+				if (i != ind)
+				{
+					leftPlayHeads[i].GetComponent<SpriteRenderer>().color = Color.white;
+				}
+			}
+		}
+		else
+		{
+			leftPlayHeads[ind].GetComponent<SpriteRenderer>().color = Color.blue;
+			leftPlayHeads[leftPlayHeads.Count - ind-1].GetComponent<SpriteRenderer>().color = Color.red;
+			for (int i = 0; i < leftPlayHeads.Count; i++)
+			{
+				if (i != ind && i != leftPlayHeads.Count - 1 - ind)
+				{
+					leftPlayHeads[i].GetComponent<SpriteRenderer>().color = Color.white;
+				}
+			}
+		}
+		
+	}
 
 	/// <summary>
 	/// Returns the subsection the given position is in.
@@ -227,4 +259,6 @@ public class ArenaGrid : UnitySingleton<ArenaGrid>
 		playRX = playRightPos.position.x;
 		playArenaWidth = playRX - playLX;
 	}
+
+
 }

@@ -10,7 +10,9 @@ public class MusicManager : MonoBehaviour
     public Transform bottom;
     public Transform left;
     public Transform right;
-	
+
+	public delegate void voidDel(int ind);
+	public static voidDel Beat;
 
     public GATActiveSampleBank sampleBank;
     public GATSoundBank toLoad;
@@ -179,6 +181,11 @@ public class MusicManager : MonoBehaviour
 				break;
 			case ConstFile.Notes.SIXTEENTH:
 				sixteenthCnt++;
+				if (Beat != null)
+				{
+					Beat(sixteenthCnt);
+				}
+				
 				if ((sixteenthCnt % 16 == 14 || sixteenthCnt % 16 == 15) && wholeCnt % 2 == 0)
 				{
 					mySampleData = sampleBank.GetAudioData("hihat-808");
